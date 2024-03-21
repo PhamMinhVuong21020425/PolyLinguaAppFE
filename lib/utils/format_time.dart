@@ -1,7 +1,7 @@
 String formatTime(String inputTime) {
   DateTime dateTime = DateTime.parse(inputTime);
   String formattedTime =
-      "${dateTime.year}-${_addLeadingZero(dateTime.month)}-${_addLeadingZero(dateTime.day)}";
+      "${dateTime.year}-${_addLeadingZero(dateTime.month)}-${_addLeadingZero(dateTime.day)} ${_addLeadingZero(dateTime.hour)}:${_addLeadingZero(dateTime.minute)}";
   return formattedTime;
 }
 
