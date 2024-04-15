@@ -5,6 +5,7 @@ class Article {
   final String image;
   final DateTime publishedAt;
   final String content;
+  final String language;
 
   Article({
     required this.title,
@@ -13,5 +14,6 @@ class Article {
     required this.image,
     required this.publishedAt,
     required this.content,
+    required this.language,
   });
 }

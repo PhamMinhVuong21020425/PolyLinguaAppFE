@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:async' show Future;
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:poly_lingua_app/models/article.dart';
+import 'package:poly_lingua_app/classes/article.dart';
 
 Future<List<Article>> fetchArticlesFromJson() async {
   String jsonString = await rootBundle.loadString('assets/data/articles.json');
@@ -15,6 +15,7 @@ Future<List<Article>> fetchArticlesFromJson() async {
       image: json['image'],
       publishedAt: DateTime.parse(json['publishedAt']),
       content: json['content'],
+      language: json['language'],
     );
   }).toList();
 
