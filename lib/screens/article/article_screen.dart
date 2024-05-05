@@ -6,15 +6,21 @@ import 'package:http/http.dart' as http;
 import 'package:poly_lingua_app/classes/word_data.dart';
 import 'package:poly_lingua_app/utils/calculate_read_time.dart';
 import 'package:poly_lingua_app/widgets/bottom_navigator_bar.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
-class ArticleScreen extends StatelessWidget {
-  // final Article article;
-
+class ArticleScreen extends StatefulWidget {
   const ArticleScreen({super.key});
 
   @override
+  State<ArticleScreen> createState() => _ArticleScreenState();
+}
+
+class _ArticleScreenState extends State<ArticleScreen> {
+  String? _summary;
+  ScrollController controller = ScrollController();
+
+  @override
   Widget build(BuildContext context) {
-    // Get data from arguments of the route
     final article = Get.arguments;
 
     return Scaffold(
@@ -22,13 +28,13 @@ class ArticleScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            // Navigate back to the home page
             Navigator.of(context).pop();
           },
         ),
         title: const Text('News Article'),
       ),
       body: SingleChildScrollView(
+        controller: controller,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -55,13 +61,15 @@ class ArticleScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Published: ${formatDate(article.publishedAt)}',
+                        article.publishedAt.length < 25
+                            ? article.publishedAt
+                            : article.publishedAt.substring(0, 24),
                         style: const TextStyle(color: Colors.grey),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(right: 20.0),
                         child: Text(
-                          'Read Time: ${calculateReadTime(article.content)} minutes',
+                          'Read Time: ${article.language == 'en' ? calculateReadTimeEn(article.content) : calculateReadTimeJa(article.content)} mins',
                           style: const TextStyle(color: Colors.grey),
                         ),
                       ),
@@ -78,19 +86,73 @@ class ArticleScreen extends StatelessWidget {
                           ),
                         );
                       } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
+                        // handle error
+                        // return Text('Error: ${snapshot.error}\n');
+                        return Text(article.content,
+                            textAlign: TextAlign.justify,
+                            style: const TextStyle(fontSize: 16));
                       } else {
-                        return const Padding(
-                          padding: EdgeInsets.only(top: 30.0),
-                          child: Center(
-                              child: CircularProgressIndicator(
-                            color: Colors.green,
-                            strokeWidth: 3.0,
-                          )),
+                        // return const Padding(
+                        //   padding: EdgeInsets.only(top: 30.0),
+                        //   child: Center(
+                        //       child: CircularProgressIndicator(
+                        //     color: Colors.green,
+                        //     strokeWidth: 3.0,
+                        //   )),
+                        // );
+
+                        return Text(
+                          article.content,
+                          textAlign: TextAlign.justify,
+                          style: const TextStyle(fontSize: 16),
                         );
                       }
                     },
                   ),
+                  Center(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.black,
+                        backgroundColor: Colors.white,
+                        side: const BorderSide(
+                            color: Colors.black), // Outline border
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5)),
+                        padding: const EdgeInsets.all(8.0), // Border radius
+                      ),
+                      onPressed: () => _fetchSummary(
+                          article.content, article.language, context),
+                      child: const Text('Summarize'),
+                    ),
+                  ),
+                  if (_summary != null) ...[
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Summary',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    AnimatedTextKit(
+                      animatedTexts: [
+                        TyperAnimatedText(
+                          _summary!,
+                          textStyle: const TextStyle(fontSize: 16),
+                          speed: const Duration(milliseconds: 20),
+                        ),
+                      ],
+                      totalRepeatCount: 1,
+                      onNext: (index, isLast) {
+                        controller.animateTo(
+                          controller.position.maxScrollExtent,
+                          duration: const Duration(seconds: 1),
+                          curve: Curves.easeOut,
+                        );
+                      },
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -98,11 +160,14 @@ class ArticleScreen extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: const CustomBottomNavigationBar(currentIndex: 0),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {},
+      //   child: const Icon(Icons.add, color: Colors.white),
+      // ),
     );
   }
 
   String formatDate(DateTime date) {
-    // Implement date formatting logic
     return '${date.day}/${date.month}/${date.year}';
   }
 
@@ -110,6 +175,10 @@ class ArticleScreen extends StatelessWidget {
     final List<InlineSpan> spans = [];
 
     for (final word in wordData) {
+      if (word.word.endsWith('\n')) {
+        spans.add(const TextSpan(text: '\n'));
+        continue;
+      }
       spans.add(
         TextSpan(
           text: '${word.word} ',
@@ -135,7 +204,6 @@ class ArticleScreen extends StatelessWidget {
         return Colors.red;
       case 'ADJ' || '形容詞':
         return Colors.purple;
-      // Add more cases for other parts of speech
       default:
         return Colors.black;
     }
@@ -167,6 +235,54 @@ class ArticleScreen extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<String> summarizeContent(String content, String language) async {
+    // final url = Uri.parse('http://10.0.2.2:5000/api/v1/summarize');
+    // final body = jsonEncode({"text": content, "language": language});
+
+    // try {
+    //   final response = await http
+    //       .post(url, body: body, headers: {'Content-Type': 'application/json'});
+
+    //   if (response.statusCode == 200) {
+    //     final data = jsonDecode(response.body) as Map;
+    //     final summary = data['result'] as String;
+
+    //     return summary;
+    //   } else {
+    //     throw Exception('Failed to summarize content: ${response.statusCode}');
+    //   }
+    // } catch (e) {
+    //   throw Exception('Failed to summarize content: $e');
+    // }
+
+    return 'This is a summary of the content, which is a brief overview of the main points, without going into too much detail, but enough to give you an idea of what the content is about, so you can decide if you want to read the full article or not, based on this summary.';
+  }
+
+  Future<void> _fetchSummary(
+      String content, String language, BuildContext context) async {
+    try {
+      final summary = await summarizeContent(content, language);
+      setState(() {
+        _summary = summary;
+      });
+    } catch (e) {
+      if (!context.mounted) return;
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Error'),
+          content: Text('Failed to fetch summary: $e'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   Future<List<WordData>> analyzeContent(String content, String language) async {

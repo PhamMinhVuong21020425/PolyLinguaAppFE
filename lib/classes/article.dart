@@ -3,7 +3,7 @@ class Article {
   final String? description;
   final String url;
   final String image;
-  final DateTime publishedAt;
+  final String publishedAt;
   final String content;
   final String language;
 

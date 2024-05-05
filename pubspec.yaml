@@ -32,6 +32,7 @@ dependencies:
         sdk: flutter
     get: ^4.6.5
     http: ^0.13.5
+    animated_text_kit: ^4.2.2
 
     # The following adds the Cupertino Icons font to your application.
     # Use with the CupertinoIcons class for iOS style icons.
@@ -62,6 +63,15 @@ flutter:
     assets:
         - assets/data/
         - assets/images/
+
+    fonts:
+        - family: Poppins
+          fonts:
+              - asset: assets/fonts/Poppins-Regular.ttf
+              - asset: assets/fonts/Poppins-Italic.ttf
+                style: italic
+              - asset: assets/fonts/Poppins-Bold.ttf
+                weight: 700
 
     # An image asset can refer to one or more resolution-specific "variants", see
     # https://flutter.dev/assets-and-images/#resolution-aware

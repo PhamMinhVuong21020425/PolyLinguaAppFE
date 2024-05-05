@@ -136,9 +136,15 @@ class HomeScreen extends StatelessWidget {
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
                                               Text(
-                                                formatTime(articles[index]
-                                                    .publishedAt
-                                                    .toString()),
+                                                articles[index]
+                                                            .publishedAt
+                                                            .length <
+                                                        20
+                                                    ? articles[index]
+                                                        .publishedAt
+                                                    : articles[index]
+                                                        .publishedAt
+                                                        .substring(0, 21),
                                                 style: TextStyle(
                                                     fontStyle: FontStyle.italic,
                                                     color:
@@ -153,12 +159,13 @@ class HomeScreen extends StatelessWidget {
                                                   ),
                                                   const SizedBox(width: 3),
                                                   Text(
-                                                    '${calculateReadTime(articles[index].content)} mins',
+                                                    '${articles[index].language == 'en' ? calculateReadTimeEn(articles[index].content) : calculateReadTimeJa(articles[index].content)} mins',
                                                     style: TextStyle(
-                                                        fontStyle:
-                                                            FontStyle.normal,
-                                                        color: Colors
-                                                            .grey.shade500),
+                                                      fontStyle:
+                                                          FontStyle.normal,
+                                                      color:
+                                                          Colors.grey.shade500,
+                                                    ),
                                                   ),
                                                   const SizedBox(
                                                     width: 5,
