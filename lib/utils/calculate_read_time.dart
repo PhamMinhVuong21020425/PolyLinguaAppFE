@@ -5,5 +5,5 @@ int calculateReadTimeJa(String content) {
 
 int calculateReadTimeEn(String content) {
   int words = content.split(' ').length;
-  return (words / 80).ceil();
+  return (words / 60).ceil();
 }

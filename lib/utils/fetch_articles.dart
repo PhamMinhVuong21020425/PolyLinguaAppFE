@@ -3,9 +3,10 @@ import 'dart:async' show Future;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:poly_lingua_app/classes/article.dart';
 
-Future<List<Article>> fetchArticlesFromJson() async {
-  String jsonString =
-      await rootBundle.loadString('assets/data/asahi-news-ja.json');
+Future<List<Article>> fetchArticlesFromJson(bool isEnglish) async {
+  String jsonString = isEnglish
+      ? await rootBundle.loadString('assets/data/newsweek-en.json')
+      : await rootBundle.loadString('assets/data/asahi-news-ja.json');
 
   List<dynamic> jsonList = json.decode(jsonString);
   List<Article> articles = jsonList.map((json) {

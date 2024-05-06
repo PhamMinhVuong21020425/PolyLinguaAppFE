@@ -1,3 +1,4 @@
+import 'package:sqflite/sqflite.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:poly_lingua_app/screens/home/home_screen.dart';
@@ -6,6 +7,7 @@ import 'package:poly_lingua_app/screens/flashcards/flashcards_screen.dart';
 import 'package:poly_lingua_app/screens/favorite/favorite_screen.dart';
 import 'package:poly_lingua_app/screens/settings/settings_screen.dart';
 import 'package:poly_lingua_app/classes/article.dart';
+import 'package:poly_lingua_app/database/database_helper.dart';
 
 var article = Article(
     title: "Scientists Discover New Species of Orchid in Amazon Rain forest",
@@ -19,12 +21,16 @@ var article = Article(
         "10日のニューヨーク外国為替市場では、この日発表されたアメリカの先月の消費者物価指数の上昇率が市場予想を上回ったことで、市場ではFRB...",
     language: "ja");
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final Database database = await DatabaseHelper.instance.database;
+  runApp(MyApp(database: database));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final Database database;
+
+  const MyApp({super.key, required this.database});
 
   // This widget is the root of your application.
   @override
@@ -39,7 +45,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/home', // Định nghĩa tuyến đường ban đầu
       getPages: [
         GetPage(name: '/home', page: () => const HomeScreen()),
-        GetPage(name: '/article', page: () => const ArticleScreen()),
+        GetPage(
+            name: '/article', page: () => ArticleScreen(database: database)),
         GetPage(name: '/flashcards', page: () => const FlashcardsScreen()),
         GetPage(name: '/favorite', page: () => const FavoriteScreen()),
         GetPage(name: '/settings', page: () => const SettingsScreen()),

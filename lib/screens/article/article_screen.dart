@@ -7,9 +7,12 @@ import 'package:poly_lingua_app/classes/word_data.dart';
 import 'package:poly_lingua_app/utils/calculate_read_time.dart';
 import 'package:poly_lingua_app/widgets/bottom_navigator_bar.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:poly_lingua_app/utils/stem_word.dart';
 
 class ArticleScreen extends StatefulWidget {
-  const ArticleScreen({super.key});
+  final Database database;
+  const ArticleScreen({super.key, required this.database});
 
   @override
   State<ArticleScreen> createState() => _ArticleScreenState();
@@ -82,7 +85,8 @@ class _ArticleScreenState extends State<ArticleScreen> {
                       if (snapshot.hasData) {
                         return SelectableText.rich(
                           TextSpan(
-                            children: parseContent(snapshot.data!, context),
+                            children: parseContent(
+                                snapshot.data!, article.language, context),
                           ),
                         );
                       } else if (snapshot.hasError) {
@@ -171,7 +175,8 @@ class _ArticleScreenState extends State<ArticleScreen> {
     return '${date.day}/${date.month}/${date.year}';
   }
 
-  List<InlineSpan> parseContent(List<WordData> wordData, BuildContext context) {
+  List<InlineSpan> parseContent(
+      List<WordData> wordData, String language, BuildContext context) {
     final List<InlineSpan> spans = [];
 
     for (final word in wordData) {
@@ -187,7 +192,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
           ),
           recognizer: TapGestureRecognizer()
             ..onTap = () {
-              showWordInfo(word, context);
+              showWordInfo(word, language, context);
             },
         ),
       );
@@ -209,11 +214,13 @@ class _ArticleScreenState extends State<ArticleScreen> {
     }
   }
 
-  void showWordInfo(WordData wordData, BuildContext context) {
+  void showWordInfo(WordData wordData, String language, BuildContext context) {
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (context) {
         return AlertDialog(
+          scrollable: true,
           title: Text(wordData.word),
           content: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,7 +228,37 @@ class _ArticleScreenState extends State<ArticleScreen> {
             children: [
               Text('Part of Speech: ${wordData.pos}'),
               const SizedBox(height: 8),
-              Text('Definition: ${wordData.definition}'),
+              FutureBuilder<Map<String, String>>(
+                future: getInfo(wordData.word, wordData.pos, language),
+                builder: (BuildContext context,
+                    AsyncSnapshot<Map<String, String>> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Pronounce: ${snapshot.data?['pronounce'] ?? 'N/A'}',
+                          style: const TextStyle(
+                            fontFamily: 'Time News Roman',
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Definition: ${snapshot.data?['definition'] == 'N/A' ? 'N/A' : '\n${snapshot.data?['definition']}'}',
+                          style: const TextStyle(
+                            fontFamily: 'Time News Roman',
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+                },
+              ),
+              // Text('Definition: ${wordData.definition}'),
             ],
           ),
           actions: [
@@ -235,6 +272,34 @@ class _ArticleScreenState extends State<ArticleScreen> {
         );
       },
     );
+  }
+
+  Future<Map<String, String>> getInfo(
+      String word, String pos, String language) async {
+    // Query DB for wordData
+    String sql = 'SELECT * FROM english_words WHERE word = ?';
+    if (language == 'ja') {
+      sql = 'SELECT * FROM japanese_words WHERE word = ?';
+    } else {
+      if (pos == 'NOUN') word = singularize(word);
+      if (pos == 'VERB') word = stemEnglishWord(word);
+    }
+
+    List<Map<String, Object?>> result =
+        await widget.database.rawQuery(sql, [word]);
+
+    if (result.isEmpty) {
+      word = '${word}e';
+      result = await widget.database.rawQuery(sql, [word]);
+    }
+
+    Map<String, Object?>? firstRow = result.isNotEmpty ? result.first : null;
+    String pronounce = firstRow?['pronounce'] as String? ?? 'N/A';
+    String definition = firstRow?['definition'] as String? ?? 'N/A';
+    return {
+      'pronounce': pronounce,
+      'definition': definition.replaceAll('\\n', '\n'),
+    };
   }
 
   Future<String> summarizeContent(String content, String language) async {
