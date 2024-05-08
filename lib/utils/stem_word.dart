@@ -28,6 +28,7 @@ String stemEnglishWord(String word) {
       word = word.replaceAllMapped(regExp, (match) {
         return verbPatterns[pattern]!.replaceAll(r'$1', match.group(1)!);
       });
+      break;
     }
   }
 
@@ -52,6 +53,9 @@ String singularize(String word) {
     "geese": "goose",
     "leaves": "leaf",
     "lives": "life",
+    "times": "times",
+    "something": "something",
+    "gagging": "gagging",
   };
 
   if (specialCases.containsKey(word)) {
@@ -67,6 +71,7 @@ String singularize(String word) {
     r'([\w]*)xes$': r'$1x',
     r'([\w]*)zes$': r'$1z',
     r'([\w]*)s$': r'$1',
+    r'([\w]*)ing$': r'$1',
   };
 
   // Iterate through patterns and apply replacements

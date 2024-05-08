@@ -25,12 +25,14 @@ class FlashcardsScreen extends StatelessWidget {
             imageUrl: 'assets/images/flashcard.jpg',
             numWords: 0,
           ),
+          SizedBox(height: 10),
           CardItem(
             title: 'Japanese Flashcard',
             description: 'Japanese Flashcard',
             imageUrl: 'assets/images/flashcard2.jpg',
             numWords: 0,
           ),
+          SizedBox(height: 10),
           CardItem(
             title: 'Star Flashcard',
             description: 'Star Flashcard',
@@ -60,30 +62,40 @@ class CardItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.white,
-      child: ListTile(
-        leading: Image.asset(
-          imageUrl,
-          width: 80,
-          height: 80,
-          fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: () {
+        Get.toNamed('/vocabulary');
+      },
+      child: Container(
+        margin: const EdgeInsets.only(left: 10, right: 10),
+        width: MediaQuery.of(context).size.width,
+        height: 80,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.black,
+            width: 1.5,
+          ),
+          borderRadius: BorderRadius.circular(6),
         ),
-        title: Text(title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            )),
-        subtitle: Text(
-          description,
-          style: const TextStyle(color: Colors.black),
-        ),
-        trailing: ElevatedButton(
-          onPressed: () {},
-          child: const Text(
-            'Start',
-            style: TextStyle(fontWeight: FontWeight.w600),
+        child: ListTile(
+          leading: ClipRRect(
+            borderRadius: BorderRadius.circular(3),
+            child: Image.asset(
+              imageUrl,
+              width: 80,
+              height: 80,
+              fit: BoxFit.cover,
+            ),
+          ),
+          title: Text(title,
+              style: const TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 61, 8, 125),
+              )),
+          subtitle: Text(
+            description,
+            style: const TextStyle(color: Colors.black, fontSize: 13),
           ),
         ),
       ),
