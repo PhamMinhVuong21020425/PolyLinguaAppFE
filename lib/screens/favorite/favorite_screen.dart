@@ -7,6 +7,8 @@ class FavoriteScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<int> favorites = [1, 2, 3]; // Danh sách các mục yêu thích
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -18,9 +20,21 @@ class FavoriteScreen extends StatelessWidget {
         ),
         title: const Text('Favorites'),
       ),
-      body: const Center(
-        child: Text('No favorites yet'),
-      ),
+      body: favorites.isEmpty
+          ? const Center(
+              child: Text('No favorites yet'),
+            )
+          : ListView.builder(
+              itemCount: favorites.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text('Favorite number ${favorites[index]}'),
+                  onTap: () {
+                    // Handle tap
+                  },
+                );
+              },
+            ),
       bottomNavigationBar: const CustomBottomNavigationBar(currentIndex: 2),
     );
   }

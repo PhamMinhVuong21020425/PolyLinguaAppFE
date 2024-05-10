@@ -1,38 +1,58 @@
 import 'package:get/get.dart';
+import 'package:poly_lingua_app/classes/flashcard.dart';
 
 class FlashcardsController extends GetxController {
   FlashcardsController();
 
-  List<String> vocabList = [
-    '人生',
-    '祖先',
-    '親戚',
-    '天婦',
-    '長男',
-    '主人',
+  final vocabList = [
+    Flashcard(question: "人生", answer: "Cuộc sống"),
+    Flashcard(question: "祖先", answer: "Tổ tiên"),
+    Flashcard(question: "長男", answer: "Đứa con trai đầu lòng"),
+    Flashcard(question: "親戚", answer: "Họ hàng"),
+    Flashcard(question: "天婦", answer: "Thiên phụ"),
+    Flashcard(question: "主人", answer: "Chủ nhân"),
+    Flashcard(question: "家庭", answer: "Gia đình"),
+    Flashcard(question: "改善", answer: "Cải thiện"),
+    Flashcard(question: "環境", answer: "Môi trường"),
+    Flashcard(question: "手間", answer: "Thời gian và công sức"),
+    Flashcard(question: "犠牲", answer: "Hy sinh"),
   ].obs;
 
-  List<bool> isFavorite = List.filled(6, false).obs;
+  final currentIndex = 0.obs;
 
-  // @override
-  // void onInit() {
-  //   super.onInit();
+  final swipe = 0.obs;
+
+  // void addVocab(String vocab) {
+  //   vocabList.add(vocab);
   // }
-
-  void addVocab(String vocab) {
-    vocabList.add(vocab);
-  }
 
   void removeVocab(int index) {
     vocabList.removeAt(index);
-    isFavorite.removeAt(index);
   }
 
-  void updateVocab(int index, String vocab) {
-    vocabList[index] = vocab;
+  // void updateVocab(int index, String vocab) {
+  //   vocabList[index] = vocab;
+  // }
+
+  void toggleStar(int index) {
+    Flashcard e = vocabList[index];
+    vocabList.removeAt(index);
+
+    e.star = !(e.star);
+    vocabList.insert(index, e);
   }
 
-  void toggleFavorite(int index) {
-    isFavorite[index] = !isFavorite[index];
+  void showNextCard() {
+    currentIndex.value = (currentIndex.value + 1 < vocabList.length)
+        ? currentIndex.value + 1
+        : 0;
+    swipe.value = 0;
+  }
+
+  void showPreviousCard() {
+    currentIndex.value = (currentIndex.value - 1 >= 0)
+        ? currentIndex.value - 1
+        : vocabList.length - 1;
+    swipe.value = 1;
   }
 }

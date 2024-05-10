@@ -4,35 +4,41 @@ import 'package:get/get.dart';
 class CustomBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
 
-  const CustomBottomNavigationBar({super.key, required this.currentIndex});
+  final bool darkMode;
+
+  const CustomBottomNavigationBar({
+    super.key,
+    required this.currentIndex,
+    this.darkMode = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       currentIndex: currentIndex,
-      items: const [
+      items: [
         BottomNavigationBarItem(
             icon: Icon(
               Icons.home,
-              color: Colors.black,
+              color: darkMode ? Colors.white : Colors.black,
             ),
             label: 'Home'),
         BottomNavigationBarItem(
             icon: Icon(
               Icons.card_membership_sharp,
-              color: Colors.black,
+              color: darkMode ? Colors.white : Colors.black,
             ),
             label: 'Flashcards'),
         BottomNavigationBarItem(
             icon: Icon(
               Icons.favorite,
-              color: Colors.black,
+              color: darkMode ? Colors.white : Colors.black,
             ),
             label: 'Favorites'),
         BottomNavigationBarItem(
             icon: Icon(
               Icons.settings,
-              color: Colors.black,
+              color: darkMode ? Colors.white : Colors.black,
             ),
             label: 'Settings')
       ],

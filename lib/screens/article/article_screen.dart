@@ -35,6 +35,32 @@ class _ArticleScreenState extends State<ArticleScreen> {
           },
         ),
         title: const Text('News Article'),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'favorite') {
+                print('Favorite selected');
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return const [
+                PopupMenuItem<String>(
+                  value: 'favorite',
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.favorite,
+                        color: Colors.red,
+                      ),
+                      SizedBox(width: 10),
+                      Text('Favorite'),
+                    ],
+                  ),
+                ),
+              ];
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         controller: controller,
