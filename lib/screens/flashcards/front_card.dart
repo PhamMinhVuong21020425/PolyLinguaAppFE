@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class ReusableCard extends StatelessWidget {
-  const ReusableCard({super.key, required this.text});
+class BackCard extends StatelessWidget {
+  const BackCard({super.key, required this.text});
   final String text;
 
   @override
@@ -15,13 +15,15 @@ class ReusableCard extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Center(
-            child: Text(text,
-                style: const TextStyle(
-                  fontSize: 18,
-                  letterSpacing: 1.0,
-                  fontFamily: "Time News Roman",
-                ),
-                textAlign: TextAlign.center),
+            child: Text(
+              text,
+              style: const TextStyle(
+                fontSize: 22,
+                letterSpacing: 1.0,
+                fontFamily: "Time News Roman",
+              ),
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
       ),

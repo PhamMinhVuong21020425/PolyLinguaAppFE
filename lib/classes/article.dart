@@ -6,6 +6,7 @@ class Article {
   final String publishedAt;
   final String content;
   final String language;
+  bool isFavorite;
 
   Article({
     required this.title,
@@ -15,5 +16,6 @@ class Article {
     required this.publishedAt,
     required this.content,
     required this.language,
+    this.isFavorite = false,
   });
 }

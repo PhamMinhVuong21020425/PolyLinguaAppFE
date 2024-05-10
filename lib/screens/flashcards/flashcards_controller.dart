@@ -3,6 +3,7 @@ import 'package:poly_lingua_app/classes/flashcard.dart';
 
 class FlashcardsController extends GetxController {
   FlashcardsController();
+  double scaleFactor = 0.8;
 
   final vocabList = [
     Flashcard(question: "人生", answer: "Cuộc sống"),
@@ -20,7 +21,9 @@ class FlashcardsController extends GetxController {
 
   final currentIndex = 0.obs;
 
-  final swipe = 0.obs;
+  void handlePage(int index) {
+    currentIndex.value = index;
+  }
 
   // void addVocab(String vocab) {
   //   vocabList.add(vocab);
@@ -46,13 +49,11 @@ class FlashcardsController extends GetxController {
     currentIndex.value = (currentIndex.value + 1 < vocabList.length)
         ? currentIndex.value + 1
         : 0;
-    swipe.value = 0;
   }
 
   void showPreviousCard() {
     currentIndex.value = (currentIndex.value - 1 >= 0)
         ? currentIndex.value - 1
         : vocabList.length - 1;
-    swipe.value = 1;
   }
 }

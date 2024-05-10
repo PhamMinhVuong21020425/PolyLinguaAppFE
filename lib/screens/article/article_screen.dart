@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:poly_lingua_app/classes/word_data.dart';
+import 'package:poly_lingua_app/screens/favorite/favorite_controller.dart';
 import 'package:poly_lingua_app/utils/calculate_read_time.dart';
 import 'package:poly_lingua_app/widgets/bottom_navigator_bar.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
@@ -39,21 +40,49 @@ class _ArticleScreenState extends State<ArticleScreen> {
           PopupMenuButton<String>(
             onSelected: (value) {
               if (value == 'favorite') {
-                print('Favorite selected');
+                setState(() {
+                  article.isFavorite = !article.isFavorite;
+                });
+                Get.find<FavoriteController>().toggleFavorite(article);
+              } else if (value == 'summarize') {
+                controller.animateTo(
+                  controller.position.maxScrollExtent + 100,
+                  duration: const Duration(seconds: 1),
+                  curve: Curves.easeOut,
+                );
+                _fetchSummary(article.content, article.language, context);
               }
             },
             itemBuilder: (BuildContext context) {
-              return const [
+              return [
                 PopupMenuItem<String>(
                   value: 'favorite',
                   child: Row(
                     children: [
+                      article.isFavorite
+                          ? const Icon(
+                              Icons.favorite,
+                              color: Colors.red,
+                            )
+                          : const Icon(
+                              Icons.favorite_border_rounded,
+                              color: Colors.black,
+                            ),
+                      const SizedBox(width: 10),
+                      const Text('Favorite'),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'summarize',
+                  child: Row(
+                    children: [
                       Icon(
-                        Icons.favorite,
-                        color: Colors.red,
+                        Icons.summarize_outlined,
+                        color: Colors.black,
                       ),
                       SizedBox(width: 10),
-                      Text('Favorite'),
+                      Text('Summarize'),
                     ],
                   ),
                 ),
@@ -138,22 +167,6 @@ class _ArticleScreenState extends State<ArticleScreen> {
                         );
                       }
                     },
-                  ),
-                  Center(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.black,
-                        backgroundColor: Colors.white,
-                        side: const BorderSide(
-                            color: Colors.black), // Outline border
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5)),
-                        padding: const EdgeInsets.all(8.0), // Border radius
-                      ),
-                      onPressed: () => _fetchSummary(
-                          article.content, article.language, context),
-                      child: const Text('Summarize'),
-                    ),
                   ),
                   if (_summary != null) ...[
                     const SizedBox(height: 16),
