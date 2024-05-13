@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:poly_lingua_app/widgets/bottom_navigator_bar.dart';
@@ -179,15 +180,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ],
                 ),
                 const Divider(),
-                const _SingleSection(
+                _SingleSection(
                   children: [
-                    _CustomListTile(
+                    const _CustomListTile(
                         title: "Help & Feedback",
                         icon: Icons.help_outline_rounded),
-                    _CustomListTile(
+                    const _CustomListTile(
                         title: "About", icon: Icons.info_outline_rounded),
                     _CustomListTile(
-                        title: "Sign out", icon: Icons.exit_to_app_rounded),
+                      title: "Sign out",
+                      icon: Icons.exit_to_app_rounded,
+                      onTap: () async {
+                        await FirebaseAuth.instance.signOut();
+                        Get.offNamed('/signin');
+                      },
+                    ),
                   ],
                 ),
               ],
@@ -205,11 +212,9 @@ class _CustomListTile extends StatelessWidget {
   final String title;
   final IconData icon;
   final Widget? trailing;
-  const _CustomListTile({
-    required this.title,
-    required this.icon,
-    this.trailing,
-  });
+  final Function()? onTap;
+  const _CustomListTile(
+      {required this.title, required this.icon, this.trailing, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -217,7 +222,7 @@ class _CustomListTile extends StatelessWidget {
       title: Text(title),
       leading: Icon(icon),
       trailing: trailing,
-      onTap: () {},
+      onTap: onTap,
     );
   }
 }

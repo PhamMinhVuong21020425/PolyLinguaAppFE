@@ -21,6 +21,7 @@ class ArticleScreen extends StatefulWidget {
 
 class _ArticleScreenState extends State<ArticleScreen> {
   String? _summary;
+  bool renderSummary = false;
   ScrollController controller = ScrollController();
 
   @override
@@ -45,12 +46,14 @@ class _ArticleScreenState extends State<ArticleScreen> {
                 });
                 Get.find<FavoriteController>().toggleFavorite(article);
               } else if (value == 'summarize') {
+                setState(() {
+                  renderSummary = true;
+                });
                 controller.animateTo(
                   controller.position.maxScrollExtent + 100,
                   duration: const Duration(seconds: 1),
                   curve: Curves.easeOut,
                 );
-                _fetchSummary(article.content, article.language, context);
               }
             },
             itemBuilder: (BuildContext context) {
@@ -168,7 +171,14 @@ class _ArticleScreenState extends State<ArticleScreen> {
                       }
                     },
                   ),
-                  if (_summary != null) ...[
+                  FutureBuilder<void>(
+                    future: _fetchSummary(
+                        article.content, article.language, context),
+                    builder: (context, snapshot) {
+                      return const Text("");
+                    },
+                  ),
+                  if (_summary != null && renderSummary == true) ...[
                     const SizedBox(height: 16),
                     const Text(
                       'Summary',
@@ -342,26 +352,27 @@ class _ArticleScreenState extends State<ArticleScreen> {
   }
 
   Future<String> summarizeContent(String content, String language) async {
-    // final url = Uri.parse('http://10.0.2.2:5000/api/v1/summarize');
-    // final body = jsonEncode({"text": content, "language": language});
+    final url = Uri.parse(
+        'https://d98f-34-125-151-109.ngrok-free.app/api/v1/summarize');
+    final body = jsonEncode({"query": content, "language": language});
 
-    // try {
-    //   final response = await http
-    //       .post(url, body: body, headers: {'Content-Type': 'application/json'});
+    try {
+      final response = await http
+          .post(url, body: body, headers: {'Content-Type': 'application/json'});
 
-    //   if (response.statusCode == 200) {
-    //     final data = jsonDecode(response.body) as Map;
-    //     final summary = data['result'] as String;
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body) as Map;
+        final summary = data['result'] as String;
 
-    //     return summary;
-    //   } else {
-    //     throw Exception('Failed to summarize content: ${response.statusCode}');
-    //   }
-    // } catch (e) {
-    //   throw Exception('Failed to summarize content: $e');
-    // }
+        return summary;
+      } else {
+        throw Exception('Failed to summarize content: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to summarize content: $e');
+    }
 
-    return 'This is a summary of the content, which is a brief overview of the main points, without going into too much detail, but enough to give you an idea of what the content is about, so you can decide if you want to read the full article or not, based on this summary.';
+    // return 'This is a summary of the content, which is a brief overview of the main points, without going into too much detail, but enough to give you an idea of what the content is about, so you can decide if you want to read the full article or not, based on this summary.';
   }
 
   Future<void> _fetchSummary(
