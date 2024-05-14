@@ -17,96 +17,99 @@ class SigninScreen extends GetView<SigninController> {
       appBar: AppBar(
         title: const Text('Sign In'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          child: Column(
-            children: [
-              TextFormField(
-                controller: emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter an email';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: passwordController,
-                decoration: const InputDecoration(labelText: 'Password'),
-                obscureText: true,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Password cannot be empty';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: () async {
-                  if (emailController.text.isNotEmpty &&
-                      passwordController.text.isNotEmpty) {
-                    await _auth
-                        .signInWithEmailAndPassword(
-                      email: emailController.text.toString(),
-                      password: passwordController.text.toString(),
-                    )
-                        .then((value) async {
-                      User? user = value.user;
-                      if (user != null) {
-                        FirebaseFirestore db = FirebaseFirestore.instance;
-                        await db
-                            .collection("users")
-                            .where('email', isEqualTo: user.email)
-                            .get()
-                            .then(
-                                (QuerySnapshot<Map<String, dynamic>> snapshot) {
-                          if (snapshot.docs.isNotEmpty) {
-                            for (DocumentSnapshot<Map<String, dynamic>> document
-                                in snapshot.docs) {
-                              var data = document.data();
-                              var profile = UserClient(
-                                data?['id'],
-                                data?['image'],
-                                data?['fullName'],
-                                data?['birthday'],
-                                data?['email'],
-                                data?['password'],
-                                data?['numberPhone'],
-                              );
-                              // Perform navigation or other tasks with the retrieved user profile
-                              // Example: Navigate to another route
-                              Get.offNamed('/home', parameters: {
-                                "id": profile.id ?? "",
-                                "fullName": profile.fullName ?? "",
-                                "email": profile.email ?? ""
-                              });
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            child: Column(
+              children: [
+                TextFormField(
+                  controller: emailController,
+                  decoration: const InputDecoration(labelText: 'Email'),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter an email';
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  controller: passwordController,
+                  decoration: const InputDecoration(labelText: 'Password'),
+                  obscureText: true,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Password cannot be empty';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (emailController.text.isNotEmpty &&
+                        passwordController.text.isNotEmpty) {
+                      await _auth
+                          .signInWithEmailAndPassword(
+                        email: emailController.text.toString(),
+                        password: passwordController.text.toString(),
+                      )
+                          .then((value) async {
+                        User? user = value.user;
+                        if (user != null) {
+                          FirebaseFirestore db = FirebaseFirestore.instance;
+                          await db
+                              .collection("users")
+                              .where('email', isEqualTo: user.email)
+                              .get()
+                              .then((QuerySnapshot<Map<String, dynamic>>
+                                  snapshot) {
+                            if (snapshot.docs.isNotEmpty) {
+                              for (DocumentSnapshot<
+                                      Map<String, dynamic>> document
+                                  in snapshot.docs) {
+                                var data = document.data();
+                                var profile = UserClient(
+                                  data?['id'],
+                                  data?['image'],
+                                  data?['fullName'],
+                                  data?['birthday'],
+                                  data?['email'],
+                                  data?['password'],
+                                  data?['numberPhone'],
+                                );
+                                // Perform navigation or other tasks with the retrieved user profile
+                                // Example: Navigate to another route
+                                Get.offNamed('/home', parameters: {
+                                  "id": profile.id ?? "",
+                                  "fullName": profile.fullName ?? "",
+                                  "email": profile.email ?? ""
+                                });
+                              }
+                            } else {
+                              print('No user found for that email.');
                             }
-                          } else {
-                            print('No user found for that email.');
-                          }
-                        }).catchError((error) {
-                          print('Error retrieving user data: $error');
-                        });
-                      }
-                    }).catchError((error) {
-                      Get.snackbar('Error', error.toString());
-                    });
-                  } else {
-                    Get.snackbar('Error', 'Please fill in all fields');
-                  }
-                },
-                child: const Text('Sign in'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Get.offNamed('/signup');
-                },
-                child: const Text('Don\'t have an account? Sign up'),
-              ),
-            ],
+                          }).catchError((error) {
+                            print('Error retrieving user data: $error');
+                          });
+                        }
+                      }).catchError((error) {
+                        Get.snackbar('Error', error.toString());
+                      });
+                    } else {
+                      Get.snackbar('Error', 'Please fill in all fields');
+                    }
+                  },
+                  child: const Text('Sign in'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Get.offNamed('/signup');
+                  },
+                  child: const Text('Don\'t have an account? Sign up'),
+                ),
+              ],
+            ),
           ),
         ),
       ),

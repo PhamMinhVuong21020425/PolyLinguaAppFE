@@ -43,12 +43,12 @@ List<GetPage> getRoutes(Database database) {
     ),
     GetPage(
       name: '/signin',
-      page: () => SigninScreen(),
+      page: () => const SigninScreen(),
       binding: SigninBindings(),
     ),
     GetPage(
       name: '/signup',
-      page: () => SignupScreen(),
+      page: () => const SignupScreen(),
       binding: SignupBindings(),
     ),
   ];

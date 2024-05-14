@@ -5,6 +5,11 @@ String stemEnglishWord(String word) {
   Map<String, String> specialCases = {
     "bring": "bring",
     "running": "running",
+    "scuffing": "scuffing",
+    "scuffed": "scuff",
+    "call": "call",
+    "called": "call",
+    "recalled": "recall",
   };
 
   if (specialCases.containsKey(word)) {
@@ -17,6 +22,7 @@ String stemEnglishWord(String word) {
     r'([\w]*)ed$': r'$1',
     r'([\w]*)ing$': r'$1',
     r'([\w]*)ies$': r'$1y',
+    r'([\w]*)ses$': r'$1s',
     r'([\w]*)s$': r'$1',
     r'([\w]*)es$': r'$1e',
   };
@@ -32,7 +38,8 @@ String stemEnglishWord(String word) {
     }
   }
 
-  if (word[word.length - 2] == word[word.length - 1]) {
+  if (word[word.length - 2] == word[word.length - 1] &&
+      word[word.length - 1] != 's') {
     word = word.substring(0, word.length - 1);
   }
 
@@ -70,6 +77,8 @@ String singularize(String word) {
     r'([\w]*)ches$': r'$1ch',
     r'([\w]*)xes$': r'$1x',
     r'([\w]*)zes$': r'$1z',
+    r'([\w]*)ves$': r'$1f',
+    r'([\w]*)ss$': r'$1ss',
     r'([\w]*)s$': r'$1',
     r'([\w]*)ing$': r'$1',
   };

@@ -22,11 +22,13 @@ class ArticleScreen extends StatefulWidget {
 class _ArticleScreenState extends State<ArticleScreen> {
   String? _summary;
   bool renderSummary = false;
+  bool isFetched = false;
   ScrollController controller = ScrollController();
+  final article = Get.arguments;
 
   @override
   Widget build(BuildContext context) {
-    final article = Get.arguments;
+    print('IS FETCH $isFetched');
 
     return Scaffold(
       appBar: AppBar(
@@ -171,13 +173,15 @@ class _ArticleScreenState extends State<ArticleScreen> {
                       }
                     },
                   ),
-                  FutureBuilder<void>(
-                    future: _fetchSummary(
-                        article.content, article.language, context),
-                    builder: (context, snapshot) {
-                      return const Text("");
-                    },
-                  ),
+                  if (isFetched == false) ...[
+                    FutureBuilder<void>(
+                      future: _fetchSummary(
+                          article.content, article.language, context),
+                      builder: (context, snapshot) {
+                        return const Text("");
+                      },
+                    ),
+                  ],
                   if (_summary != null && renderSummary == true) ...[
                     const SizedBox(height: 16),
                     const Text(
@@ -353,7 +357,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
 
   Future<String> summarizeContent(String content, String language) async {
     final url = Uri.parse(
-        'https://d98f-34-125-151-109.ngrok-free.app/api/v1/summarize');
+        'https://6913-34-142-250-187.ngrok-free.app/api/v1/summarize');
     final body = jsonEncode({"query": content, "language": language});
 
     try {
@@ -378,25 +382,27 @@ class _ArticleScreenState extends State<ArticleScreen> {
   Future<void> _fetchSummary(
       String content, String language, BuildContext context) async {
     try {
+      print('Fetching summary...');
       final summary = await summarizeContent(content, language);
-      setState(() {
-        _summary = summary;
-      });
+      _summary = summary;
+      isFetched = true;
+      print('Done fetching summary!');
     } catch (e) {
       if (!context.mounted) return;
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Error'),
-          content: Text('Failed to fetch summary: $e'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
+      print('Failed to fetch summary: $e');
+      // showDialog(
+      //   context: context,
+      //   builder: (context) => AlertDialog(
+      //     title: const Text('Error'),
+      //     content: Text('Failed to fetch summary: $e'),
+      //     actions: [
+      //       TextButton(
+      //         onPressed: () => Navigator.of(context).pop(),
+      //         child: const Text('OK'),
+      //       ),
+      //     ],
+      //   ),
+      // );
     }
   }
 
