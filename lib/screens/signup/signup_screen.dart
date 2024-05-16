@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:poly_lingua_app/classes/user.dart';
 import 'package:poly_lingua_app/screens/signup/signup_controller.dart';
+import 'package:poly_lingua_app/services/user_controller.dart';
 
 class SignupScreen extends GetView<SignupController> {
   const SignupScreen({super.key});
@@ -16,6 +17,7 @@ class SignupScreen extends GetView<SignupController> {
     var confirmController = TextEditingController();
     final FirebaseAuth _auth = FirebaseAuth.instance;
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    final userController = Get.find<UserController>();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sign Up'),
@@ -72,8 +74,11 @@ class SignupScreen extends GetView<SignupController> {
               ElevatedButton(
                 onPressed: () {
                   if (passwordController.text != confirmController.text) {
-                    Get.snackbar('Error', 'Passwords do not match',
-                        duration: const Duration(seconds: 10));
+                    Get.snackbar(
+                      'Error',
+                      'Passwords do not match',
+                      duration: const Duration(seconds: 10),
+                    );
                   } else if (emailController.text.isNotEmpty &&
                       passwordController.text.isNotEmpty &&
                       fullNameController.text.isNotEmpty) {
@@ -86,13 +91,19 @@ class SignupScreen extends GetView<SignupController> {
                           _firestore.collection("users").doc().id;
                       final data = UserClient(
                         documentId,
-                        '',
-                        fullNameController.text.toString(),
-                        '',
                         emailController.text.toString(),
                         passwordController.text.toString(),
+                        fullNameController.text.toString(),
                         '',
+                        '',
+                        '',
+                        '',
+                        'en',
+                        [],
+                        [],
                       );
+
+                      // Save to Firestore
                       await _firestore
                           .collection('users')
                           .withConverter(
@@ -103,13 +114,18 @@ class SignupScreen extends GetView<SignupController> {
                           .doc(documentId)
                           .set(data);
 
+                      userController.setUser(data);
+
                       Get.offNamed('/home');
                     }).catchError((error) {
                       Get.snackbar('Error', error.toString());
                     });
                   } else {
-                    Get.snackbar('Error', 'Please fill in the form',
-                        duration: const Duration(seconds: 10));
+                    Get.snackbar(
+                      'Error',
+                      'Please fill in the form',
+                      duration: const Duration(seconds: 10),
+                    );
                   }
                 },
                 child: const Text('Sign up'),

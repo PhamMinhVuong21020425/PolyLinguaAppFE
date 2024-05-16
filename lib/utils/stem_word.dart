@@ -7,9 +7,6 @@ String stemEnglishWord(String word) {
     "running": "running",
     "scuffing": "scuffing",
     "scuffed": "scuff",
-    "call": "call",
-    "called": "call",
-    "recalled": "recall",
   };
 
   if (specialCases.containsKey(word)) {
@@ -23,8 +20,8 @@ String stemEnglishWord(String word) {
     r'([\w]*)ing$': r'$1',
     r'([\w]*)ies$': r'$1y',
     r'([\w]*)ses$': r'$1s',
+    r'([\w]*)es$': r'$1',
     r'([\w]*)s$': r'$1',
-    r'([\w]*)es$': r'$1e',
   };
 
   // Iterate through patterns and apply replacements
@@ -39,7 +36,8 @@ String stemEnglishWord(String word) {
   }
 
   if (word[word.length - 2] == word[word.length - 1] &&
-      word[word.length - 1] != 's') {
+      word[word.length - 1] != 's' &&
+      word[word.length - 1] != 'l') {
     word = word.substring(0, word.length - 1);
   }
 

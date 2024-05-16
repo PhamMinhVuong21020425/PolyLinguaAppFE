@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:poly_lingua_app/services/user_controller.dart';
 import 'package:poly_lingua_app/widgets/bottom_navigator_bar.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -11,8 +12,9 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  final userController = Get.find<UserController>();
   bool _isDark = false;
-  bool isEnglish = true;
+
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -60,16 +62,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ),
                           ),
                           const SizedBox(width: 16),
-                          const Text(
-                            'Pham Vuong',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${userController.user!.fullName}',
+                                style: const TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                '${userController.user!.email}',
+                                style: const TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontStyle: FontStyle.italic,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 110),
-                          const Icon(Icons.arrow_drop_down_circle_outlined),
+                          const Expanded(child: SizedBox()),
+                          const Padding(
+                            padding: EdgeInsets.only(right: 20),
+                            child: Icon(Icons.arrow_drop_down_circle_outlined),
+                          ),
                         ],
                       ),
                     ),
@@ -104,12 +122,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           GestureDetector(
                             onTap: () {
                               setState(() {
-                                isEnglish = true;
+                                userController.updateUser(
+                                  language: 'en',
+                                );
                               });
                             },
                             child: Container(
                               decoration: BoxDecoration(
-                                color: isEnglish
+                                color: userController.user!.language == 'en'
                                     ? Colors.deepOrange
                                     : Colors.white,
                                 border: Border.all(
@@ -123,8 +143,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               child: Text(
                                 'EN',
                                 style: TextStyle(
-                                  color:
-                                      isEnglish ? Colors.white : Colors.black,
+                                  color: userController.user!.language == 'en'
+                                      ? Colors.white
+                                      : Colors.black,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -133,12 +154,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           GestureDetector(
                             onTap: () {
                               setState(() {
-                                isEnglish = false;
+                                userController.updateUser(
+                                  language: 'ja',
+                                );
                               });
                             },
                             child: Container(
                               decoration: BoxDecoration(
-                                color: !isEnglish
+                                color: userController.user!.language == 'ja'
                                     ? Colors.deepOrange
                                     : Colors.white,
                                 border: Border.all(
@@ -152,8 +175,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               child: Text(
                                 'JA',
                                 style: TextStyle(
-                                  color:
-                                      !isEnglish ? Colors.white : Colors.black,
+                                  color: userController.user!.language == 'ja'
+                                      ? Colors.white
+                                      : Colors.black,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),

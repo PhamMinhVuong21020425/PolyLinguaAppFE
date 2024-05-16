@@ -6,17 +6,17 @@ class FlashcardsController extends GetxController {
   double scaleFactor = 0.8;
 
   final vocabList = [
-    Flashcard(question: "人生", answer: "Cuộc sống"),
-    Flashcard(question: "祖先", answer: "Tổ tiên"),
-    Flashcard(question: "長男", answer: "Đứa con trai đầu lòng"),
-    Flashcard(question: "親戚", answer: "Họ hàng"),
-    Flashcard(question: "天婦", answer: "Thiên phụ"),
-    Flashcard(question: "主人", answer: "Chủ nhân"),
-    Flashcard(question: "家庭", answer: "Gia đình"),
-    Flashcard(question: "改善", answer: "Cải thiện"),
-    Flashcard(question: "環境", answer: "Môi trường"),
-    Flashcard(question: "手間", answer: "Thời gian và công sức"),
-    Flashcard(question: "犠牲", answer: "Hy sinh"),
+    Flashcard(question: "人生", answer: "Cuộc sống", language: "ja"),
+    Flashcard(question: "祖先", answer: "Tổ tiên", language: "ja"),
+    Flashcard(question: "長男", answer: "Đứa con trai đầu lòng", language: "ja"),
+    Flashcard(question: "親戚", answer: "Họ hàng", language: "ja"),
+    Flashcard(question: "天婦", answer: "Thiên phụ", language: "ja"),
+    Flashcard(question: "主人", answer: "Chủ nhân", language: "ja"),
+    Flashcard(question: "家庭", answer: "Gia đình", language: "ja"),
+    Flashcard(question: "改善", answer: "Cải thiện", language: "ja"),
+    Flashcard(question: "環境", answer: "Môi trường", language: "ja"),
+    Flashcard(question: "手間", answer: "Thời gian và công sức", language: "ja"),
+    Flashcard(question: "犠牲", answer: "Hy sinh", language: "ja"),
   ].obs;
 
   final currentIndex = 0.obs;

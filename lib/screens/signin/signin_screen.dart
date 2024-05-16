@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:poly_lingua_app/classes/user.dart';
 import 'package:poly_lingua_app/screens/signin/signin_controller.dart';
+import 'package:poly_lingua_app/services/user_controller.dart';
 
 class SigninScreen extends GetView<SigninController> {
   const SigninScreen({super.key});
@@ -13,6 +14,8 @@ class SigninScreen extends GetView<SigninController> {
     var emailController = TextEditingController();
     var passwordController = TextEditingController();
     final FirebaseAuth _auth = FirebaseAuth.instance;
+    final userController = Get.find<UserController>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sign In'),
@@ -46,19 +49,19 @@ class SigninScreen extends GetView<SigninController> {
                 ),
                 const SizedBox(height: 16.0),
                 ElevatedButton(
-                  onPressed: () async {
+                  onPressed: () {
                     if (emailController.text.isNotEmpty &&
                         passwordController.text.isNotEmpty) {
-                      await _auth
+                      _auth
                           .signInWithEmailAndPassword(
                         email: emailController.text.toString(),
                         password: passwordController.text.toString(),
                       )
-                          .then((value) async {
+                          .then((value) {
                         User? user = value.user;
                         if (user != null) {
                           FirebaseFirestore db = FirebaseFirestore.instance;
-                          await db
+                          db
                               .collection("users")
                               .where('email', isEqualTo: user.email)
                               .get()
@@ -69,25 +72,20 @@ class SigninScreen extends GetView<SigninController> {
                                       Map<String, dynamic>> document
                                   in snapshot.docs) {
                                 var data = document.data();
-                                var profile = UserClient(
-                                  data?['id'],
-                                  data?['image'],
-                                  data?['fullName'],
-                                  data?['birthday'],
-                                  data?['email'],
-                                  data?['password'],
-                                  data?['numberPhone'],
-                                );
+                                var profile = UserClient.fromJson(data!);
+
+                                // Set user profile in the user controller
+                                userController.setUser(profile);
+
                                 // Perform navigation or other tasks with the retrieved user profile
                                 // Example: Navigate to another route
-                                Get.offNamed('/home', parameters: {
-                                  "id": profile.id ?? "",
-                                  "fullName": profile.fullName ?? "",
-                                  "email": profile.email ?? ""
-                                });
+                                Get.offNamed('/home');
                               }
                             } else {
-                              print('No user found for that email.');
+                              Get.snackbar(
+                                'Invalid',
+                                'No user found for that email.',
+                              );
                             }
                           }).catchError((error) {
                             print('Error retrieving user data: $error');

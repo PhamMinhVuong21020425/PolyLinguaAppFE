@@ -3,12 +3,15 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:poly_lingua_app/classes/article.dart';
 import 'package:poly_lingua_app/classes/word_data.dart';
 import 'package:poly_lingua_app/screens/favorite/favorite_controller.dart';
+import 'package:poly_lingua_app/services/user_controller.dart';
 import 'package:poly_lingua_app/utils/calculate_read_time.dart';
 import 'package:poly_lingua_app/widgets/bottom_navigator_bar.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:poly_lingua_app/utils/stem_word.dart';
 
 class ArticleScreen extends StatefulWidget {
@@ -23,8 +26,19 @@ class _ArticleScreenState extends State<ArticleScreen> {
   String? _summary;
   bool renderSummary = false;
   bool isFetched = false;
+  bool isFavorite = false;
   ScrollController controller = ScrollController();
-  final article = Get.arguments;
+  final Article article = Get.arguments;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final UserController userController = Get.find<UserController>();
+
+  @override
+  void initState() {
+    super.initState();
+    isFavorite = userController.user?.articles
+            ?.any((element) => element.title == article.title) ??
+        false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +58,10 @@ class _ArticleScreenState extends State<ArticleScreen> {
             onSelected: (value) {
               if (value == 'favorite') {
                 setState(() {
-                  article.isFavorite = !article.isFavorite;
+                  isFavorite = !isFavorite;
+                  Get.find<FavoriteController>()
+                      .toggleFavorite(article, isFavorite);
                 });
-                Get.find<FavoriteController>().toggleFavorite(article);
               } else if (value == 'summarize') {
                 setState(() {
                   renderSummary = true;
@@ -64,7 +79,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                   value: 'favorite',
                   child: Row(
                     children: [
-                      article.isFavorite
+                      isFavorite
                           ? const Icon(
                               Icons.favorite,
                               color: Colors.red,
@@ -356,8 +371,12 @@ class _ArticleScreenState extends State<ArticleScreen> {
   }
 
   Future<String> summarizeContent(String content, String language) async {
-    final url = Uri.parse(
-        'https://6913-34-142-250-187.ngrok-free.app/api/v1/summarize');
+    final snapshot = await _firestore.collection("servers").get();
+    final docs = snapshot.docs;
+    final server = docs[0].data() as Map;
+    print(server['summarization_api']);
+
+    final url = Uri.parse('${server['summarization_api']}/api/v1/summarize');
     final body = jsonEncode({"query": content, "language": language});
 
     try {

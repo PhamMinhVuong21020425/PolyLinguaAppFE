@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:poly_lingua_app/services/user_controller.dart';
 import 'package:poly_lingua_app/widgets/bottom_navigator_bar.dart';
 import 'package:poly_lingua_app/classes/article.dart';
 
@@ -14,7 +15,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool isEnglish = true;
+  // bool isEnglish = true;
+  final userController = Get.find<UserController>();
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +60,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Expanded(
                     child: FutureBuilder<List<Article>>(
-                      future: fetchArticlesFromJson(isEnglish),
+                      future: fetchArticlesFromJson(
+                          userController.user!.language == 'en' ? true : false),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -210,67 +213,67 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ]),
           ),
-          Positioned(
-            bottom: MediaQuery.of(context).size.height * 0.01,
-            right: MediaQuery.of(context).size.width * 0.03,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      isEnglish = true;
-                    });
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: isEnglish ? Colors.deepOrange : Colors.white,
-                      border: Border.all(
-                        color: Colors.black,
-                        width: 1.5,
-                      ),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    child: Text(
-                      'EN',
-                      style: TextStyle(
-                        color: isEnglish ? Colors.white : Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      isEnglish = false;
-                    });
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: !isEnglish ? Colors.deepOrange : Colors.white,
-                      border: Border.all(
-                        color: Colors.black,
-                        width: 1.5,
-                      ),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    child: Text(
-                      'JA',
-                      style: TextStyle(
-                        color: !isEnglish ? Colors.white : Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // Positioned(
+          //   bottom: MediaQuery.of(context).size.height * 0.01,
+          //   right: MediaQuery.of(context).size.width * 0.03,
+          //   child: Row(
+          //     mainAxisSize: MainAxisSize.min,
+          //     children: [
+          //       GestureDetector(
+          //         onTap: () {
+          //           setState(() {
+          //             isEnglish = true;
+          //           });
+          //         },
+          //         child: Container(
+          //           decoration: BoxDecoration(
+          //             color: isEnglish ? Colors.deepOrange : Colors.white,
+          //             border: Border.all(
+          //               color: Colors.black,
+          //               width: 1.5,
+          //             ),
+          //             borderRadius: BorderRadius.circular(2),
+          //           ),
+          //           padding:
+          //               const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          //           child: Text(
+          //             'EN',
+          //             style: TextStyle(
+          //               color: isEnglish ? Colors.white : Colors.black,
+          //               fontWeight: FontWeight.bold,
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+          //       GestureDetector(
+          //         onTap: () {
+          //           setState(() {
+          //             isEnglish = false;
+          //           });
+          //         },
+          //         child: Container(
+          //           decoration: BoxDecoration(
+          //             color: !isEnglish ? Colors.deepOrange : Colors.white,
+          //             border: Border.all(
+          //               color: Colors.black,
+          //               width: 1.5,
+          //             ),
+          //             borderRadius: BorderRadius.circular(2),
+          //           ),
+          //           padding:
+          //               const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          //           child: Text(
+          //             'JA',
+          //             style: TextStyle(
+          //               color: !isEnglish ? Colors.white : Colors.black,
+          //               fontWeight: FontWeight.bold,
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
       bottomNavigationBar: const CustomBottomNavigationBar(currentIndex: 0),

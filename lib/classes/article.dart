@@ -6,7 +6,6 @@ class Article {
   final String publishedAt;
   final String content;
   final String language;
-  bool isFavorite;
 
   Article({
     required this.title,
@@ -16,6 +15,29 @@ class Article {
     required this.publishedAt,
     required this.content,
     required this.language,
-    this.isFavorite = false,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'description': description,
+      'url': url,
+      'image': image,
+      'publishedAt': publishedAt,
+      'content': content,
+      'language': language,
+    };
+  }
+
+  static Article fromJson(Map<String, dynamic> json) {
+    return Article(
+      title: json['title'],
+      description: json['description'],
+      url: json['url'],
+      image: json['image'],
+      publishedAt: json['publishedAt'],
+      content: json['content'],
+      language: json['language'],
+    );
+  }
 }

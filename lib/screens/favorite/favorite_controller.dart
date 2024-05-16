@@ -1,18 +1,27 @@
 import 'package:get/get.dart';
 import 'package:poly_lingua_app/classes/article.dart';
+import 'package:poly_lingua_app/services/user_controller.dart';
 
 class FavoriteController extends GetxController {
   FavoriteController();
 
-  final articleList = [].obs;
+  List<Article> articleList = <Article>[].obs;
 
-  final currentIndex = 0.obs;
+  @override
+  void onInit() {
+    super.onInit();
+    UserController userController = Get.find<UserController>();
+    articleList = userController.user?.articles ?? [];
+  }
 
-  void toggleFavorite(Article article) {
-    if (article.isFavorite) {
+  void toggleFavorite(Article article, bool isFavorite) {
+    if (isFavorite) {
       articleList.insert(0, article);
     } else {
-      articleList.remove(article);
+      articleList.removeWhere((element) => element.title == article.title);
     }
+    UserController userController = Get.find<UserController>();
+
+    userController.updateUser(articles: articleList);
   }
 }
