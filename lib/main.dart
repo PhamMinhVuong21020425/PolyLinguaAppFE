@@ -30,8 +30,11 @@ class MyApp extends StatelessWidget {
       title: 'Poly Lingua App',
       theme: ThemeData(
         fontFamily: 'Poppins',
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xff6750a4)),
         useMaterial3: true,
+        dialogTheme: const DialogTheme(
+          backgroundColor: Colors.white,
+        ),
       ),
       initialRoute: '/signin',
       getPages: getRoutes(database),

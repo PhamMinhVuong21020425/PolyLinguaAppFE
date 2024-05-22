@@ -13,6 +13,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:poly_lingua_app/utils/stem_word.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 class ArticleScreen extends StatefulWidget {
   final Database database;
@@ -31,6 +32,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
   final Article article = Get.arguments;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final UserController userController = Get.find<UserController>();
+  final FlutterTts flutterTts = FlutterTts();
 
   @override
   void initState() {
@@ -38,6 +40,19 @@ class _ArticleScreenState extends State<ArticleScreen> {
     isFavorite = userController.user?.articles
             ?.any((element) => element.title == article.title) ??
         false;
+  }
+
+  @override
+  void dispose() {
+    flutterTts.stop();
+    super.dispose();
+  }
+
+  Future<void> _pronounceWord(String word, String language) async {
+    await flutterTts.setVolume(1.0);
+    await flutterTts.setPitch(1.2); // Higher frequency (pitch) of the voice
+    await flutterTts.setLanguage(language);
+    await flutterTts.speak(word);
   }
 
   @override
@@ -283,50 +298,141 @@ class _ArticleScreenState extends State<ArticleScreen> {
   }
 
   void showWordInfo(WordData wordData, String language, BuildContext context) {
+    bool isStar = false;
     showDialog(
-      barrierDismissible: false,
+      barrierDismissible: true,
+      barrierColor: Colors.black.withOpacity(0.6),
       context: context,
       builder: (context) {
         return AlertDialog(
+          backgroundColor: Colors.white, // Set the background color to white
+          shape: RoundedRectangleBorder(
+            // Add a rounded rectangle border with a shadow
+            borderRadius: BorderRadius.circular(10.0),
+            side: const BorderSide(
+              color: Colors.transparent, // Make the border color transparent
+            ),
+          ),
+          shadowColor: Colors.grey, // Set the color of the shadow to black
+          elevation: 8.0, // Add a shadow around the box
           scrollable: true,
-          title: Text(wordData.word),
+          actionsAlignment: MainAxisAlignment.end,
+          title: Row(
+            children: [
+              Text(
+                wordData.word,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22,
+                ),
+              ),
+              const Spacer(),
+              IconButton(
+                  icon: const Icon(Icons.volume_up_rounded),
+                  onPressed: () {
+                    if (language == "en") {
+                      _pronounceWord(wordData.word, 'en-US');
+                    } // for English
+                    if (language == "ja") {
+                      _pronounceWord(wordData.word, 'ja-JP');
+                    } // for Japanese
+                  }),
+              IconButton(
+                icon: Icon(
+                  isStar ? Icons.star_rounded : Icons.star_border_rounded,
+                  color: isStar ? Colors.amber : Colors.black,
+                ),
+                onPressed: () {
+                  setState(() {
+                    isStar = !isStar;
+                  });
+                },
+              ),
+            ],
+          ),
           content: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Part of Speech: ${wordData.pos}'),
+              RichText(
+                  text: TextSpan(
+                      style: DefaultTextStyle.of(context).style,
+                      children: <TextSpan>[
+                    const TextSpan(
+                      text: 'Type: ',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Time News Roman',
+                      ),
+                    ),
+                    TextSpan(
+                      text: wordData.pos,
+                      style: const TextStyle(
+                        fontFamily: 'Time News Roman',
+                      ),
+                    ),
+                  ])),
               const SizedBox(height: 8),
               FutureBuilder<Map<String, String>>(
                 future: getInfo(wordData.word, wordData.pos, language),
                 builder: (BuildContext context,
                     AsyncSnapshot<Map<String, String>> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
+                    return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Pronounce: ${snapshot.data?['pronounce'] ?? 'N/A'}',
-                          style: const TextStyle(
-                            fontFamily: 'Time News Roman',
-                          ),
+                        RichText(
+                          text: TextSpan(
+                              style: DefaultTextStyle.of(context).style,
+                              children: <TextSpan>[
+                                const TextSpan(
+                                  text: 'Pronunciation: ',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Time News Roman',
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: snapshot.data?['pronounce'] == 'N/A'
+                                      ? 'N/A'
+                                      : '\n${snapshot.data?['pronounce']}',
+                                  style: const TextStyle(
+                                    fontFamily: 'Time News Roman',
+                                  ),
+                                ),
+                              ]),
                         ),
                         const SizedBox(height: 8),
-                        Text(
-                          'Definition: ${snapshot.data?['definition'] == 'N/A' ? 'N/A' : '\n${snapshot.data?['definition']}'}',
-                          style: const TextStyle(
-                            fontFamily: 'Time News Roman',
-                          ),
+                        RichText(
+                          text: TextSpan(
+                              style: DefaultTextStyle.of(context).style,
+                              children: <TextSpan>[
+                                const TextSpan(
+                                  text: 'Definition: ',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Time News Roman',
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: snapshot.data?['definition'] == 'N/A'
+                                      ? 'N/A'
+                                      : '\n${snapshot.data?['definition']}',
+                                  style: const TextStyle(
+                                    fontFamily: 'Time News Roman',
+                                  ),
+                                ),
+                              ]),
                         ),
                       ],
                     );
                   }
                 },
               ),
-              // Text('Definition: ${wordData.definition}'),
             ],
           ),
           actions: [
