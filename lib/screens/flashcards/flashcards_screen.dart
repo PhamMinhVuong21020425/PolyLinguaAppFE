@@ -1,6 +1,7 @@
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:poly_lingua_app/classes/flashcard.dart';
 import 'package:poly_lingua_app/screens/flashcards/flashcards_controller.dart';
 import 'package:poly_lingua_app/screens/flashcards/front_card.dart';
 import 'package:poly_lingua_app/screens/flashcards/back_card.dart';
@@ -10,6 +11,7 @@ class FlashcardsScreen extends GetView<FlashcardsController> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Flashcard> listVocabulary = Get.arguments;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -17,13 +19,14 @@ class FlashcardsScreen extends GetView<FlashcardsController> {
         toolbarHeight: 80,
         elevation: 5,
       ),
+      resizeToAvoidBottomInset: false,
       body: Obx(
         () => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                  "Question ${controller.currentIndex.value + 1} of ${controller.vocabList.length}",
+                  "Question ${controller.currentIndex.value + 1} of ${listVocabulary.length}",
                   style: const TextStyle(fontSize: 15)),
               Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -32,7 +35,7 @@ class FlashcardsScreen extends GetView<FlashcardsController> {
                   valueColor: const AlwaysStoppedAnimation(Colors.pinkAccent),
                   minHeight: 5,
                   value: (controller.currentIndex.value + 1) /
-                      controller.vocabList.length,
+                      listVocabulary.length,
                 ),
               ),
               SizedBox(
@@ -46,9 +49,9 @@ class FlashcardsScreen extends GetView<FlashcardsController> {
                       initialPage: controller.currentIndex.value,
                       viewportFraction: 1.0,
                     ),
-                    itemCount: controller.vocabList.length,
+                    itemCount: listVocabulary.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return ItemFlashCard(index);
+                      return ItemFlashCard(index, listVocabulary);
                     },
                   ),
                 ),
@@ -63,7 +66,8 @@ class FlashcardsScreen extends GetView<FlashcardsController> {
 
 class ItemFlashCard extends GetView<FlashcardsController> {
   final int index;
-  const ItemFlashCard(this.index, {super.key});
+  final List<Flashcard> listVocabulary;
+  const ItemFlashCard(this.index, this.listVocabulary, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -99,10 +103,10 @@ class ItemFlashCard extends GetView<FlashcardsController> {
       child: FlipCard(
         direction: FlipDirection.VERTICAL,
         front: FrontCard(
-          text: controller.vocabList[index].question,
+          text: listVocabulary[index],
         ),
         back: BackCard(
-          text: controller.vocabList[index].answer,
+          text: listVocabulary[index],
         ),
       ),
     );

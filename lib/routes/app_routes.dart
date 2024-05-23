@@ -1,7 +1,9 @@
 import 'package:get/get.dart';
 import 'package:poly_lingua_app/screens/favorite/favorite_bindings.dart';
 import 'package:poly_lingua_app/screens/flashcards/flashcards_bindings.dart';
-import 'package:poly_lingua_app/screens/flashcards/list_vocabulary_screen.dart';
+import 'package:poly_lingua_app/screens/flashcards/english_vocabulary_screen.dart';
+import 'package:poly_lingua_app/screens/flashcards/japanese_vocabulary_screen.dart';
+import 'package:poly_lingua_app/screens/flashcards/star_vocabulary_screen.dart';
 import 'package:poly_lingua_app/screens/home/home_screen.dart';
 import 'package:poly_lingua_app/screens/article/article_screen.dart';
 import 'package:poly_lingua_app/screens/flashcards/flashcards_home_screen.dart';
@@ -33,8 +35,18 @@ List<GetPage> getRoutes(Database database) {
       page: () => const FlashcardsHomeScreen(),
     ),
     GetPage(
-      name: '/vocabulary',
-      page: () => const FlashcardVocabularyScreen(),
+      name: '/vocabulary/star',
+      page: () => const StarVocabularyScreen(),
+      binding: FlashcardsBindings(),
+    ),
+    GetPage(
+      name: '/vocabulary/english',
+      page: () => const EnglishVocabularyScreen(),
+      binding: FlashcardsBindings(),
+    ),
+    GetPage(
+      name: '/vocabulary/japanese',
+      page: () => const JapaneseVocabularyScreen(),
       binding: FlashcardsBindings(),
     ),
     GetPage(

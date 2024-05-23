@@ -7,6 +7,8 @@ String stemEnglishWord(String word) {
     "running": "running",
     "scuffing": "scuffing",
     "scuffed": "scuff",
+    "controlled": "control",
+    "controlling": "control",
   };
 
   if (specialCases.containsKey(word)) {

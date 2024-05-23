@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:poly_lingua_app/classes/article.dart';
+import 'package:poly_lingua_app/classes/flashcard.dart';
 import 'package:poly_lingua_app/classes/word_data.dart';
 import 'package:poly_lingua_app/screens/favorite/favorite_controller.dart';
+import 'package:poly_lingua_app/screens/flashcards/flashcards_controller.dart';
 import 'package:poly_lingua_app/services/user_controller.dart';
 import 'package:poly_lingua_app/utils/calculate_read_time.dart';
 import 'package:poly_lingua_app/widgets/bottom_navigator_bar.dart';
@@ -32,6 +34,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
   final Article article = Get.arguments;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final UserController userController = Get.find<UserController>();
+  final flashcardsController = Get.put(FlashcardsController());
   final FlutterTts flutterTts = FlutterTts();
 
   @override
@@ -50,6 +53,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
 
   Future<void> _pronounceWord(String word, String language) async {
     await flutterTts.setVolume(1.0);
+    await flutterTts.setSpeechRate(0.8);
     await flutterTts.setPitch(1.2); // Higher frequency (pitch) of the voice
     await flutterTts.setLanguage(language);
     await flutterTts.speak(word);
@@ -298,7 +302,10 @@ class _ArticleScreenState extends State<ArticleScreen> {
   }
 
   void showWordInfo(WordData wordData, String language, BuildContext context) {
-    bool isStar = false;
+    bool isStar = userController.user?.vocabularies?.any(
+            (element) => element.question == wordData.word && element.star) ??
+        false;
+
     showDialog(
       barrierDismissible: true,
       barrierColor: Colors.black.withOpacity(0.6),
@@ -338,14 +345,30 @@ class _ArticleScreenState extends State<ArticleScreen> {
                     } // for Japanese
                   }),
               IconButton(
-                icon: Icon(
-                  isStar ? Icons.star_rounded : Icons.star_border_rounded,
-                  color: isStar ? Colors.amber : Colors.black,
-                ),
-                onPressed: () {
-                  setState(() {
-                    isStar = !isStar;
-                  });
+                icon: GetX<UserController>(builder: (userController) {
+                  final user = userController.user;
+                  if (user == null) {
+                    return const Center(
+                        child: Text('No user found. Please sign in.'));
+                  }
+                  return Icon(
+                    isStar ? Icons.star_rounded : Icons.star_border_rounded,
+                    color: isStar ? Colors.amber : Colors.black,
+                  );
+                }),
+                onPressed: () async {
+                  Map<String, String> transWord =
+                      await getInfo(wordData.word, wordData.pos, language);
+                  Flashcard vocabulary = Flashcard(
+                    question: wordData.word,
+                    answer:
+                        '${transWord['pronounce']!}\n${transWord['definition']!}',
+                    language: language,
+                    star: true,
+                  );
+
+                  isStar = !isStar;
+                  flashcardsController.toggleStar(vocabulary, isStar);
                 },
               ),
             ],

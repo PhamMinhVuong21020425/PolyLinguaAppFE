@@ -23,21 +23,21 @@ class FlashcardsHomeScreen extends StatelessWidget {
             title: 'English Flashcard',
             description: 'English Flashcard',
             imageUrl: 'assets/images/flashcard.jpg',
-            numWords: 0,
+            type: "english",
           ),
           SizedBox(height: 10),
           CardItem(
             title: 'Japanese Flashcard',
             description: 'Japanese Flashcard',
             imageUrl: 'assets/images/flashcard2.jpg',
-            numWords: 0,
+            type: "japanese",
           ),
           SizedBox(height: 10),
           CardItem(
             title: 'Star Flashcard',
             description: 'Star Flashcard',
             imageUrl: 'assets/images/flashcard4.jpg',
-            numWords: 0,
+            type: "star",
           ),
         ],
       ),
@@ -50,21 +50,21 @@ class CardItem extends StatelessWidget {
   final String title;
   final String description;
   final String imageUrl;
-  final int numWords;
+  final String type;
 
   const CardItem({
     super.key,
     required this.title,
     required this.description,
     required this.imageUrl,
-    required this.numWords,
+    required this.type,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Get.toNamed('/vocabulary');
+        Get.toNamed('/vocabulary/$type');
       },
       child: Container(
         margin: const EdgeInsets.only(left: 10, right: 10),
