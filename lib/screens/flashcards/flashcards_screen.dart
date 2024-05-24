@@ -11,7 +11,8 @@ class FlashcardsScreen extends GetView<FlashcardsController> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Flashcard> listVocabulary = Get.arguments;
+    final List<Flashcard> listVocabulary = Get.arguments["data"];
+    final String typeList = Get.arguments["type"];
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -43,7 +44,7 @@ class FlashcardsScreen extends GetView<FlashcardsController> {
                 child: Center(
                   child: PageView.builder(
                     onPageChanged: (index) {
-                      controller.handlePage(index);
+                      controller.handlePage(index, typeList);
                     },
                     controller: PageController(
                       initialPage: controller.currentIndex.value,
@@ -102,9 +103,7 @@ class ItemFlashCard extends GetView<FlashcardsController> {
       transform: matrix4,
       child: FlipCard(
         direction: FlipDirection.VERTICAL,
-        front: FrontCard(
-          text: listVocabulary[index],
-        ),
+        front: const FrontCard(),
         back: BackCard(
           text: listVocabulary[index],
         ),

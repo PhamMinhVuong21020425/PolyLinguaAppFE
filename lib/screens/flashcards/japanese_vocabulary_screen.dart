@@ -26,8 +26,12 @@ class JapaneseVocabularyScreen extends GetView<FlashcardsController> {
                   return GestureDetector(
                     onTap: () {
                       controller.currentIndex.value = index;
-                      Get.to(const FlashcardsScreen(),
-                          arguments: controller.japaneseVocabList);
+                      controller.currentVocab.value =
+                          controller.japaneseVocabList[index];
+                      Get.to(const FlashcardsScreen(), arguments: {
+                        "data": controller.japaneseVocabList,
+                        "type": "japanese"
+                      });
                     },
                     child: Container(
                       margin: const EdgeInsets.only(

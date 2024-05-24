@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:poly_lingua_app/classes/flashcard.dart';
+import 'package:get/get.dart';
+import 'package:poly_lingua_app/screens/flashcards/flashcards_controller.dart';
 import 'package:poly_lingua_app/utils/pronounce_word.dart';
 
-class FrontCard extends StatelessWidget {
-  const FrontCard({super.key, required this.text});
-  final Flashcard text;
+class FrontCard extends GetView<FlashcardsController> {
+  const FrontCard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,23 +20,27 @@ class FrontCard extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  text.question,
-                  style: const TextStyle(
-                    fontSize: 32,
-                    letterSpacing: 1.0,
+                Obx(
+                  () => Text(
+                    controller.currentVocab.value.question,
+                    style: const TextStyle(
+                      fontSize: 32,
+                      letterSpacing: 1.0,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
                 ),
                 IconButton(
                     icon: const Icon(Icons.volume_up_outlined),
                     iconSize: 30,
                     onPressed: () {
-                      if (text.language == "en") {
-                        pronounceWord(text.question, 'en-US');
+                      if (controller.currentVocab.value.language == "en") {
+                        pronounceWord(
+                            controller.currentVocab.value.question, 'en-US');
                       } // for English
-                      if (text.language == "ja") {
-                        pronounceWord(text.question, 'ja-JP');
+                      if (controller.currentVocab.value.language == "ja") {
+                        pronounceWord(
+                            controller.currentVocab.value.question, 'ja-JP');
                       } // for Japanese
                     }),
               ],

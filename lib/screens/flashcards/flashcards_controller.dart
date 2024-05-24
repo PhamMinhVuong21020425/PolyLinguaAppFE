@@ -12,6 +12,8 @@ class FlashcardsController extends GetxController {
   List<Flashcard> japaneseVocabList = <Flashcard>[].obs;
   List<Flashcard> englishVocabList = <Flashcard>[].obs;
   List<Flashcard> starVocabList = <Flashcard>[].obs;
+  Rx<Flashcard> currentVocab =
+      Flashcard(answer: '', question: '', language: '').obs;
 
   final currentIndex = 0.obs;
 
@@ -26,16 +28,31 @@ class FlashcardsController extends GetxController {
     starVocabList = vocabList.where((element) => element.star).toList();
   }
 
-  void handlePage(int index) {
+  void handlePage(int index, String typeList) {
+    onInit();
     currentIndex.value = index;
+    if (typeList == "japanese") {
+      currentVocab.value = japaneseVocabList[index];
+    } else if (typeList == "english") {
+      currentVocab.value = englishVocabList[index];
+    } else {
+      currentVocab.value = starVocabList[index];
+    }
   }
 
   void addVocab(Flashcard vocab) {
     vocabList.insert(0, vocab);
+    userController.updateUser(vocabularies: vocabList);
+    onInit();
   }
 
-  void updateVocab(int index, Flashcard vocab) {
-    vocabList[index] = vocab;
+  void updateVocab(Flashcard originVocab, Flashcard newVocab) {
+    int index = vocabList
+        .indexWhere((element) => element.question == originVocab.question);
+    vocabList[index] = newVocab;
+    currentVocab.value = newVocab;
+    userController.updateUser(vocabularies: vocabList);
+    onInit();
   }
 
   void toggleStar(Flashcard vocab, bool isStar) {

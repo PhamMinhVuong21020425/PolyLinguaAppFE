@@ -27,8 +27,12 @@ class EnglishVocabularyScreen extends GetView<FlashcardsController> {
                   return GestureDetector(
                     onTap: () {
                       controller.currentIndex.value = index;
-                      Get.to(const FlashcardsScreen(),
-                          arguments: controller.englishVocabList);
+                      controller.currentVocab.value =
+                          controller.englishVocabList[index];
+                      Get.to(const FlashcardsScreen(), arguments: {
+                        "data": controller.englishVocabList,
+                        "type": "english"
+                      });
                     },
                     child: Container(
                       margin: const EdgeInsets.only(
