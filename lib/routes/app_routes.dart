@@ -8,6 +8,9 @@ import 'package:poly_lingua_app/screens/home/home_screen.dart';
 import 'package:poly_lingua_app/screens/article/article_screen.dart';
 import 'package:poly_lingua_app/screens/flashcards/flashcards_home_screen.dart';
 import 'package:poly_lingua_app/screens/favorite/favorite_screen.dart';
+import 'package:poly_lingua_app/screens/settings/change_password.dart';
+import 'package:poly_lingua_app/screens/settings/notifications.dart';
+import 'package:poly_lingua_app/screens/settings/edit_profile.dart';
 import 'package:poly_lingua_app/screens/settings/settings_screen.dart';
 import 'package:poly_lingua_app/screens/signin/signin_bindings.dart';
 import 'package:poly_lingua_app/screens/signin/signin_screen.dart';
@@ -62,6 +65,18 @@ List<GetPage> getRoutes(Database database) {
       name: '/signup',
       page: () => const SignupScreen(),
       binding: SignupBindings(),
+    ),
+    GetPage(
+      name: '/change-password',
+      page: () => const ChangePasswordScreen(),
+    ),
+    GetPage(
+      name: '/profile',
+      page: () => const EditProfileScreen(),
+    ),
+    GetPage(
+      name: '/notifications',
+      page: () => const NotificationsScreen(),
     ),
   ];
 

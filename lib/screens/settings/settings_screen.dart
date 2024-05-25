@@ -56,7 +56,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             child: CircleAvatar(
                               backgroundColor: Colors.white,
                               child: Image.network(
-                                'https://cdn.icon-icons.com/icons2/1879/PNG/512/iconfinder-8-avatar-2754583_120515.png',
+                                userController.user!.image!,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -186,31 +186,52 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ],
                       ),
                     ),
-                    const _CustomListTile(
+                    _CustomListTile(
                       title: "Notifications",
                       icon: Icons.notifications_none_rounded,
+                      onTap: () {
+                        Get.toNamed('/notifications');
+                      },
                     ),
                   ],
                 ),
                 const Divider(),
-                const _SingleSection(
+                _SingleSection(
                   title: "Account",
                   children: [
                     _CustomListTile(
-                        title: "Profile", icon: Icons.person_outline_rounded),
+                      title: "Edit Profile",
+                      icon: Icons.person_outline_rounded,
+                      onTap: () {
+                        Get.toNamed('/profile');
+                      },
+                    ),
                     _CustomListTile(
-                        title: "Change Password",
-                        icon: Icons.lock_outline_rounded),
+                      title: "Change Password",
+                      icon: Icons.lock_outline_rounded,
+                      onTap: () {
+                        Get.toNamed('/change-password');
+                      },
+                    ),
                   ],
                 ),
                 const Divider(),
                 _SingleSection(
                   children: [
-                    const _CustomListTile(
-                        title: "Help & Feedback",
-                        icon: Icons.help_outline_rounded),
-                    const _CustomListTile(
-                        title: "About", icon: Icons.info_outline_rounded),
+                    _CustomListTile(
+                      title: "Help & Feedback",
+                      icon: Icons.help_outline_rounded,
+                      onTap: () {
+                        Get.toNamed('/home');
+                      },
+                    ),
+                    _CustomListTile(
+                      title: "About",
+                      icon: Icons.info_outline_rounded,
+                      onTap: () {
+                        Get.toNamed('/home');
+                      },
+                    ),
                     _CustomListTile(
                       title: "Sign out",
                       icon: Icons.exit_to_app_rounded,
