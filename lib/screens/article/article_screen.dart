@@ -54,7 +54,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
 
   Future<void> _pronounceWord(String word, String language) async {
     await flutterTts.setVolume(1.0);
-    await flutterTts.setSpeechRate(0.8);
+    await flutterTts.setSpeechRate(0.6);
     await flutterTts.setPitch(1.2); // Higher frequency (pitch) of the voice
     await flutterTts.setLanguage(language);
     await flutterTts.speak(word);
