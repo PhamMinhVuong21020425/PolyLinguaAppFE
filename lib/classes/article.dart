@@ -7,9 +7,9 @@ class Article {
   final String content;
   final String language;
 
-  Article({
+  const Article({
     required this.title,
-    this.description,
+    required this.description,
     required this.url,
     required this.image,
     required this.publishedAt,

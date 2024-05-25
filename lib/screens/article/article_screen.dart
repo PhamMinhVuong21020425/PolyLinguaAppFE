@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:poly_lingua_app/classes/article.dart';
 import 'package:poly_lingua_app/classes/flashcard.dart';
 import 'package:poly_lingua_app/classes/word_data.dart';
+import 'package:poly_lingua_app/screens/article/comment_widget.dart';
 import 'package:poly_lingua_app/screens/favorite/favorite_controller.dart';
 import 'package:poly_lingua_app/screens/flashcards/flashcards_controller.dart';
 import 'package:poly_lingua_app/services/user_controller.dart';
@@ -244,6 +245,9 @@ class _ArticleScreenState extends State<ArticleScreen> {
                       },
                     ),
                   ],
+                  ArticleCommentSection(
+                    articleTitle: article.title,
+                  ),
                 ],
               ),
             ),

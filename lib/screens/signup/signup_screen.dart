@@ -94,7 +94,7 @@ class SignupScreen extends GetView<SignupController> {
                         emailController.text.toString(),
                         passwordController.text.toString(),
                         fullNameController.text.toString(),
-                        '',
+                        'https://firebasestorage.googleapis.com/v0/b/polylinguaapp.appspot.com/o/images%2Fanonymous_user.png?alt=media&token=ab68e21b-6457-4400-9a02-eb772889d01d',
                         '',
                         '',
                         '',
