@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:poly_lingua_app/services/user_controller.dart';
+import 'package:poly_lingua_app/utils/check_image_network.dart';
 import 'package:poly_lingua_app/widgets/bottom_navigator_bar.dart';
 import 'package:poly_lingua_app/classes/article.dart';
 
@@ -133,13 +134,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         child: ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(5),
-                                          child: Image.network(
+                                          child: checkImageNetwork(
                                             filteredArticles[index].image,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.3,
-                                            fit: BoxFit.cover,
+                                            context,
                                           ),
                                         ),
                                       ),

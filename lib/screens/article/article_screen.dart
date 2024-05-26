@@ -138,9 +138,36 @@ class _ArticleScreenState extends State<ArticleScreen> {
           children: [
             Image.network(
               article.image,
-              height: 200,
+              height: 250,
               width: double.infinity,
-              fit: BoxFit.cover,
+              fit: BoxFit.fitWidth,
+              errorBuilder: (context, error, stackTrace) {
+                // Handle 404 error and render default image
+                if (error is NetworkImageLoadException) {
+                  return Image.asset(
+                    'assets/images/asahi.jpg',
+                    height: 250,
+                    width: double.infinity,
+                    fit: BoxFit.fitWidth,
+                  );
+                }
+                // Handle other errors
+                return Container();
+              },
+              loadingBuilder: (context, child, loadingProgress) {
+                // Handle loading state if needed
+                if (loadingProgress == null) {
+                  return child;
+                }
+                return Center(
+                  child: Image.asset(
+                    'assets/images/news.png',
+                    height: 250,
+                    width: double.infinity,
+                    fit: BoxFit.fitWidth,
+                  ),
+                );
+              },
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),

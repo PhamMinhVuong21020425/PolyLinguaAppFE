@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:poly_lingua_app/screens/favorite/favorite_controller.dart';
 import 'package:poly_lingua_app/services/user_controller.dart';
 import 'package:poly_lingua_app/utils/calculate_read_time.dart';
+import 'package:poly_lingua_app/utils/check_image_network.dart';
 import 'package:poly_lingua_app/widgets/bottom_navigator_bar.dart';
 
 class FavoriteScreen extends GetView<FavoriteController> {
@@ -66,11 +67,9 @@ class FavoriteScreen extends GetView<FavoriteController> {
                                     const EdgeInsets.symmetric(vertical: 20),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(5),
-                                  child: Image.network(
+                                  child: checkImageNetwork(
                                     controller.articleList[index].image,
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.3,
-                                    fit: BoxFit.cover,
+                                    context,
                                   ),
                                 ),
                               ),
