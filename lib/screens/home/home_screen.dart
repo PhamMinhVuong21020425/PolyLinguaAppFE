@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:poly_lingua_app/services/bm25_okapi.dart';
 import 'package:poly_lingua_app/services/user_controller.dart';
 import 'package:poly_lingua_app/utils/check_image_network.dart';
 import 'package:poly_lingua_app/widgets/bottom_navigator_bar.dart';
@@ -36,11 +37,30 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   List<Article> filterArticles(List<Article> articles, String searchText) {
-    return articles
+    if (searchText.isEmpty) {
+      return articles;
+    }
+
+    List<Article> keywordArticles = articles
         .where((article) =>
             article.title.toLowerCase().contains(searchText.toLowerCase()) ||
             article.url.toLowerCase().contains(searchText.toLowerCase()))
         .toList();
+
+    List<String> query = searchText.toLowerCase().trim().split(' ');
+    List<String> corpus =
+        articles.map((article) => article.description!.toLowerCase()).toList();
+
+    BM25Okapi bm25 = BM25Okapi(corpus);
+    List<Article> bm25Articles = bm25.getTopN(query, articles, 3);
+
+    Set<Article> filteredArticles = {};
+    if (articles[0].language == 'en') {
+      filteredArticles.addAll(bm25Articles);
+    }
+    filteredArticles.addAll(keywordArticles);
+
+    return filteredArticles.toList();
   }
 
   @override

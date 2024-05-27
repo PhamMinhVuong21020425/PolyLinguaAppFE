@@ -48,6 +48,7 @@ class _BackCardState extends State<BackCard> {
                       _isEditing
                           ? Expanded(
                               child: TextField(
+                                maxLines: null,
                                 controller: _questionController,
                                 style: const TextStyle(
                                   fontSize: 24,
@@ -59,14 +60,22 @@ class _BackCardState extends State<BackCard> {
                                 ),
                               ),
                             )
-                          : Text(
-                              flashcardsController.currentVocab.value.question,
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontFamily: "Time News Roman",
-                                fontWeight: FontWeight.bold,
+                          : Flexible(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    flashcardsController
+                                        .currentVocab.value.question,
+                                    style: const TextStyle(
+                                      fontSize: 24,
+                                      fontFamily: "Time News Roman",
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.start,
+                                  ),
+                                ],
                               ),
-                              textAlign: TextAlign.start,
                             ),
                       IconButton(
                         icon: const Icon(Icons.edit),

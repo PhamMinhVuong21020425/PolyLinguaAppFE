@@ -237,7 +237,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       icon: Icons.exit_to_app_rounded,
                       onTap: () async {
                         await FirebaseAuth.instance.signOut();
-                        Get.offNamed('/signin');
+                        Get.offAllNamed('/signin');
                       },
                     ),
                   ],

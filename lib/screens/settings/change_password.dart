@@ -93,44 +93,62 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   },
                 ),
                 const SizedBox(height: 24.0),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      userController.updateUser(
-                        password: _newPasswordController.text,
-                      );
-                      Get.snackbar(
-                        'Success',
-                        'Password updated successfully',
-                        duration: const Duration(seconds: 5),
-                        titleText: const Text(
+                SizedBox(
+                  width: double.infinity,
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: const Color(0xFF00B761),
+                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6.0),
+                        side: const BorderSide(
+                          color: Color(0xFF00B761),
+                          width: 1.5,
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        userController.updateUser(
+                          password: _newPasswordController.text,
+                        );
+                        Get.snackbar(
                           'Success',
-                          style: TextStyle(
-                            fontSize: 18.0,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                          'Password updated successfully',
+                          duration: const Duration(seconds: 5),
+                          titleText: const Text(
+                            'Success',
+                            style: TextStyle(
+                              fontSize: 18.0,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        colorText: Colors.white,
-                        backgroundColor: Colors.black.withOpacity(0.5),
-                        borderRadius: 6.0,
-                        margin: const EdgeInsets.all(16.0),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0,
-                          vertical: 16.0,
-                        ),
-                        boxShadows: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 8.0,
-                            offset: const Offset(0, 3),
+                          colorText: Colors.white,
+                          backgroundColor: Colors.black.withOpacity(0.5),
+                          borderRadius: 6.0,
+                          margin: const EdgeInsets.all(16.0),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20.0,
+                            vertical: 16.0,
                           ),
-                        ],
-                      );
-                      Get.offNamed('/settings');
-                    }
-                  },
-                  child: const Text('Change Password'),
+                          boxShadows: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 8.0,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        );
+                        Get.offNamed('/settings');
+                      }
+                    },
+                    child: const Text(
+                      'Change Password',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                  ),
                 ),
               ],
             ),

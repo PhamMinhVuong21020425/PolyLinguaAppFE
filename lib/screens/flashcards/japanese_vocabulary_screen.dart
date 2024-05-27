@@ -76,6 +76,7 @@ class JapaneseVocabularyScreen extends GetView<FlashcardsController> {
                                 style: const TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w500,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ),
