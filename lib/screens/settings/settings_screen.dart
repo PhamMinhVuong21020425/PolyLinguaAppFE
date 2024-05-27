@@ -222,14 +222,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       title: "Help & Feedback",
                       icon: Icons.help_outline_rounded,
                       onTap: () {
-                        Get.toNamed('/home');
+                        Get.toNamed('/help-feedback');
                       },
                     ),
                     _CustomListTile(
                       title: "About",
                       icon: Icons.info_outline_rounded,
                       onTap: () {
-                        Get.toNamed('/home');
+                        Get.toNamed('/about');
                       },
                     ),
                     _CustomListTile(
