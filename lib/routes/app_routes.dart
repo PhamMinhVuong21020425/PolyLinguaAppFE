@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:poly_lingua_app/screens/article/article_bindings.dart';
 import 'package:poly_lingua_app/screens/favorite/favorite_bindings.dart';
 import 'package:poly_lingua_app/screens/flashcards/flashcards_bindings.dart';
 import 'package:poly_lingua_app/screens/flashcards/english_vocabulary_screen.dart';
@@ -57,6 +58,7 @@ List<GetPage> getRoutes(Database database) {
     GetPage(
       name: '/article',
       page: () => ArticleScreen(database: database),
+      binding: ArticleBindings(),
     ),
     GetPage(
       name: '/signin',

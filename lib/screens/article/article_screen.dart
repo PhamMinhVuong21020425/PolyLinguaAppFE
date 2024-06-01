@@ -1,11 +1,10 @@
-import 'dart:convert';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:poly_lingua_app/classes/article.dart';
 import 'package:poly_lingua_app/classes/flashcard.dart';
 import 'package:poly_lingua_app/classes/word_data.dart';
+import 'package:poly_lingua_app/screens/article/article_controller.dart';
 import 'package:poly_lingua_app/screens/article/comment_widget.dart';
 import 'package:poly_lingua_app/screens/favorite/favorite_controller.dart';
 import 'package:poly_lingua_app/screens/flashcards/flashcards_controller.dart';
@@ -14,7 +13,6 @@ import 'package:poly_lingua_app/utils/calculate_read_time.dart';
 import 'package:poly_lingua_app/widgets/bottom_navigator_bar.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:poly_lingua_app/utils/stem_word.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
@@ -27,15 +25,13 @@ class ArticleScreen extends StatefulWidget {
 }
 
 class _ArticleScreenState extends State<ArticleScreen> {
-  String? _summary;
   bool renderSummary = false;
-  bool isFetched = false;
   bool isFavorite = false;
   ScrollController controller = ScrollController();
   final Article article = Get.arguments;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final UserController userController = Get.find<UserController>();
   final flashcardsController = Get.put(FlashcardsController());
+  final articleController = Get.find<ArticleController>();
   final FlutterTts flutterTts = FlutterTts();
 
   @override
@@ -44,6 +40,9 @@ class _ArticleScreenState extends State<ArticleScreen> {
     isFavorite = userController.user?.articles
             ?.any((element) => element.title == article.title) ??
         false;
+
+    articleController.analyzeContent(article.content, article.language);
+    articleController.fetchSummary(article.title, article.language, context);
   }
 
   @override
@@ -62,8 +61,6 @@ class _ArticleScreenState extends State<ArticleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('IS FETCH $isFetched');
-
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -201,51 +198,25 @@ class _ArticleScreenState extends State<ArticleScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  FutureBuilder<List<WordData>>(
-                    future: analyzeContent(article.content, article.language),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return SelectableText.rich(
-                          TextSpan(
-                            children: parseContent(
-                                snapshot.data!, article.language, context),
-                          ),
-                        );
-                      } else if (snapshot.hasError) {
-                        // handle error
-                        // return Text('Error: ${snapshot.error}\n');
-                        return Text(article.content,
+                  Obx(
+                    () => articleController.wordDataObs.isEmpty
+                        ? Text(
+                            article.content,
                             textAlign: TextAlign.justify,
-                            style: const TextStyle(fontSize: 16));
-                      } else {
-                        // return const Padding(
-                        //   padding: EdgeInsets.only(top: 30.0),
-                        //   child: Center(
-                        //       child: CircularProgressIndicator(
-                        //     color: Colors.green,
-                        //     strokeWidth: 3.0,
-                        //   )),
-                        // );
-
-                        return Text(
-                          article.content,
-                          textAlign: TextAlign.justify,
-                          style: const TextStyle(fontSize: 16),
-                        );
-                      }
-                    },
+                            style: const TextStyle(fontSize: 16),
+                          )
+                        : SelectableText.rich(
+                            TextSpan(
+                              children: parseContent(
+                                articleController.wordDataObs,
+                                article.language,
+                                context,
+                              ),
+                            ),
+                          ),
                   ),
-                  if (isFetched == false) ...[
-                    FutureBuilder<void>(
-                      future: _fetchSummary(
-                          article.content, article.language, context),
-                      builder: (context, snapshot) {
-                        return const Text("");
-                      },
-                    ),
-                  ],
-                  if (_summary != null && renderSummary == true) ...[
-                    const SizedBox(height: 16),
+                  if (renderSummary == true) ...[
+                    const SizedBox(height: 8),
                     const Text(
                       'Summary',
                       style: TextStyle(
@@ -254,23 +225,26 @@ class _ArticleScreenState extends State<ArticleScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    AnimatedTextKit(
-                      animatedTexts: [
-                        TyperAnimatedText(
-                          _summary!,
-                          textStyle: const TextStyle(fontSize: 16),
-                          speed: const Duration(milliseconds: 20),
-                        ),
-                      ],
-                      totalRepeatCount: 1,
-                      onNext: (index, isLast) {
-                        controller.animateTo(
-                          controller.position.maxScrollExtent,
-                          duration: const Duration(seconds: 1),
-                          curve: Curves.easeOut,
-                        );
-                      },
+                    Obx(
+                      () => AnimatedTextKit(
+                        animatedTexts: [
+                          TyperAnimatedText(
+                            articleController.summaryObs.value,
+                            textStyle: const TextStyle(fontSize: 16),
+                            speed: const Duration(milliseconds: 20),
+                          ),
+                        ],
+                        totalRepeatCount: 1,
+                        onNext: (index, isLast) {
+                          controller.animateTo(
+                            controller.position.maxScrollExtent,
+                            duration: const Duration(seconds: 1),
+                            curve: Curves.easeOut,
+                          );
+                        },
+                      ),
                     ),
+                    const SizedBox(height: 8),
                   ],
                   ArticleCommentSection(
                     articleTitle: article.title,
@@ -409,23 +383,26 @@ class _ArticleScreenState extends State<ArticleScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               RichText(
-                  text: TextSpan(
-                      style: DefaultTextStyle.of(context).style,
-                      children: <TextSpan>[
+                text: TextSpan(
+                  children: <TextSpan>[
                     const TextSpan(
                       text: 'Type: ',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Time News Roman',
+                        color: Colors.black,
                       ),
                     ),
                     TextSpan(
                       text: wordData.pos,
                       style: const TextStyle(
                         fontFamily: 'Time News Roman',
+                        color: Colors.black,
                       ),
                     ),
-                  ])),
+                  ],
+                ),
+              ),
               const SizedBox(height: 8),
               FutureBuilder<Map<String, String>>(
                 future: getInfo(wordData.word, wordData.pos, language),
@@ -528,87 +505,5 @@ class _ArticleScreenState extends State<ArticleScreen> {
       'pronounce': pronounce,
       'definition': definition.replaceAll('\\n', '\n'),
     };
-  }
-
-  Future<String> summarizeContent(String content, String language) async {
-    final snapshot = await _firestore.collection("servers").get();
-    final docs = snapshot.docs;
-    final server = docs[0].data() as Map;
-    print(server['summarization_api']);
-
-    final url = Uri.parse('${server['summarization_api']}/api/v1/summarize');
-    final body = jsonEncode({"query": content, "language": language});
-
-    try {
-      final response = await http
-          .post(url, body: body, headers: {'Content-Type': 'application/json'});
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body) as Map;
-        final summary = data['result'] as String;
-
-        return summary;
-      } else {
-        throw Exception('Failed to summarize content: ${response.statusCode}');
-      }
-    } catch (e) {
-      throw Exception('Failed to summarize content: $e');
-    }
-
-    // return 'This is a summary of the content, which is a brief overview of the main points, without going into too much detail, but enough to give you an idea of what the content is about, so you can decide if you want to read the full article or not, based on this summary.';
-  }
-
-  Future<void> _fetchSummary(
-      String content, String language, BuildContext context) async {
-    try {
-      print('Fetching summary...');
-      final summary = await summarizeContent(content, language);
-      _summary = summary;
-      isFetched = true;
-      print('Done fetching summary!');
-    } catch (e) {
-      if (!context.mounted) return;
-      print('Failed to fetch summary: $e');
-      // showDialog(
-      //   context: context,
-      //   builder: (context) => AlertDialog(
-      //     title: const Text('Error'),
-      //     content: Text('Failed to fetch summary: $e'),
-      //     actions: [
-      //       TextButton(
-      //         onPressed: () => Navigator.of(context).pop(),
-      //         child: const Text('OK'),
-      //       ),
-      //     ],
-      //   ),
-      // );
-    }
-  }
-
-  Future<List<WordData>> analyzeContent(String content, String language) async {
-    final url = Uri.parse('http://10.0.2.2:5000/api/v1/analyze');
-    final body = jsonEncode({"text": content, "language": language});
-
-    try {
-      final response = await http
-          .post(url, body: body, headers: {'Content-Type': 'application/json'});
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body) as List;
-        final wordData = data
-            .map((item) => WordData(
-                  word: item['word'],
-                  pos: item['pos'],
-                  definition: item['definition'],
-                ))
-            .toList();
-
-        return wordData;
-      } else {
-        throw Exception('Failed to analyze content: ${response.statusCode}');
-      }
-    } catch (e) {
-      throw Exception('Failed to analyze content: $e');
-    }
   }
 }
