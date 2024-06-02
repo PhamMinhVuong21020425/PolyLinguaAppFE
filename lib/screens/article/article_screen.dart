@@ -41,8 +41,12 @@ class _ArticleScreenState extends State<ArticleScreen> {
             ?.any((element) => element.title == article.title) ??
         false;
 
-    articleController.analyzeContent(article.content, article.language);
-    articleController.fetchSummary(article.title, article.language, context);
+    articleController
+        .analyzeContent(article.content, article.language)
+        .then((value) => setState(() {}))
+        .catchError((e) => print('Failed to analyze content: $e'));
+
+    articleController.fetchSummary(article.content, article.language, context);
   }
 
   @override
@@ -198,23 +202,21 @@ class _ArticleScreenState extends State<ArticleScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Obx(
-                    () => articleController.wordDataObs.isEmpty
-                        ? Text(
-                            article.content,
-                            textAlign: TextAlign.justify,
-                            style: const TextStyle(fontSize: 16),
-                          )
-                        : SelectableText.rich(
-                            TextSpan(
-                              children: parseContent(
-                                articleController.wordDataObs,
-                                article.language,
-                                context,
-                              ),
+                  articleController.wordDataObs.isEmpty
+                      ? Text(
+                          article.content,
+                          textAlign: TextAlign.justify,
+                          style: const TextStyle(fontSize: 16),
+                        )
+                      : SelectableText.rich(
+                          TextSpan(
+                            children: parseContent(
+                              articleController.wordDataObs,
+                              article.language,
+                              context,
                             ),
                           ),
-                  ),
+                        ),
                   if (renderSummary == true) ...[
                     const SizedBox(height: 8),
                     const Text(
@@ -225,24 +227,22 @@ class _ArticleScreenState extends State<ArticleScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Obx(
-                      () => AnimatedTextKit(
-                        animatedTexts: [
-                          TyperAnimatedText(
-                            articleController.summaryObs.value,
-                            textStyle: const TextStyle(fontSize: 16),
-                            speed: const Duration(milliseconds: 20),
-                          ),
-                        ],
-                        totalRepeatCount: 1,
-                        onNext: (index, isLast) {
-                          controller.animateTo(
-                            controller.position.maxScrollExtent,
-                            duration: const Duration(seconds: 1),
-                            curve: Curves.easeOut,
-                          );
-                        },
-                      ),
+                    AnimatedTextKit(
+                      animatedTexts: [
+                        TyperAnimatedText(
+                          articleController.summaryObs.value.trim(),
+                          textStyle: const TextStyle(fontSize: 16),
+                          speed: const Duration(milliseconds: 20),
+                        ),
+                      ],
+                      totalRepeatCount: 1,
+                      onNext: (index, isLast) {
+                        controller.animateTo(
+                          controller.position.maxScrollExtent,
+                          duration: const Duration(seconds: 1),
+                          curve: Curves.easeOut,
+                        );
+                      },
                     ),
                     const SizedBox(height: 8),
                   ],
