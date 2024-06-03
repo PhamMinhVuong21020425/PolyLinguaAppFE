@@ -47,9 +47,28 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               children: [
                 TextFormField(
                   controller: _currentPasswordController,
+                  cursorColor: Colors.grey,
                   obscureText: true,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.all(16.0),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(6)),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(6),
+                      borderSide: const BorderSide(
+                        color: Color(0xFF00B761),
+                        width: 1.5,
+                      ),
+                    ),
                     labelText: 'Current Password',
+                    floatingLabelStyle: MaterialStateTextStyle.resolveWith(
+                      (Set<MaterialState> states) {
+                        final Color color = states.contains(MaterialState.error)
+                            ? Theme.of(context).colorScheme.error
+                            : const Color(0xFF00B761);
+                        return TextStyle(color: color);
+                      },
+                    ),
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -64,9 +83,28 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 const SizedBox(height: 16.0),
                 TextFormField(
                   controller: _newPasswordController,
+                  cursorColor: Colors.grey,
                   obscureText: true,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.all(16.0),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(6)),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(6),
+                      borderSide: const BorderSide(
+                        color: Color(0xFF00B761),
+                        width: 1.5,
+                      ),
+                    ),
                     labelText: 'New Password',
+                    floatingLabelStyle: MaterialStateTextStyle.resolveWith(
+                      (Set<MaterialState> states) {
+                        final Color color = states.contains(MaterialState.error)
+                            ? Theme.of(context).colorScheme.error
+                            : const Color(0xFF00B761);
+                        return TextStyle(color: color);
+                      },
+                    ),
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {
@@ -79,8 +117,27 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 TextFormField(
                   controller: _confirmPasswordController,
                   obscureText: true,
-                  decoration: const InputDecoration(
+                  cursorColor: Colors.grey,
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.all(16.0),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(6)),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(6),
+                      borderSide: const BorderSide(
+                        color: Color(0xFF00B761),
+                        width: 1.5,
+                      ),
+                    ),
                     labelText: 'Confirm Password',
+                    floatingLabelStyle: MaterialStateTextStyle.resolveWith(
+                      (Set<MaterialState> states) {
+                        final Color color = states.contains(MaterialState.error)
+                            ? Theme.of(context).colorScheme.error
+                            : const Color(0xFF00B761);
+                        return TextStyle(color: color);
+                      },
+                    ),
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {
