@@ -50,7 +50,7 @@ class FavoriteScreen extends GetView<FavoriteController> {
                           decoration: const BoxDecoration(
                             border: Border(
                               bottom: BorderSide(
-                                color: Colors.pinkAccent,
+                                color: Colors.purple,
                                 width: 1.5,
                               ),
                             ),

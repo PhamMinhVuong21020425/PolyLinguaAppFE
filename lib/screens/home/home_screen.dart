@@ -136,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   decoration: const BoxDecoration(
                                     border: Border(
                                       bottom: BorderSide(
-                                        color: Colors.green,
+                                        color: Colors.purple,
                                         width: 1.0,
                                       ),
                                     ),

@@ -104,7 +104,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         scale: 0.8,
                         child: Switch(
                           value: _isDark,
-                          activeColor: Colors.green,
+                          activeColor: const Color(0xFF00B761),
                           onChanged: (value) {
                             setState(() {
                               _isDark = value;
@@ -130,7 +130,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             child: Container(
                               decoration: BoxDecoration(
                                 color: userController.user!.language == 'en'
-                                    ? Colors.deepOrange
+                                    ? const Color(0xFF00B761)
                                     : Colors.white,
                                 border: Border.all(
                                   color: Colors.black,
@@ -162,7 +162,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             child: Container(
                               decoration: BoxDecoration(
                                 color: userController.user!.language == 'ja'
-                                    ? Colors.deepOrange
+                                    ? const Color(0xFF00B761)
                                     : Colors.white,
                                 border: Border.all(
                                   color: Colors.black,
