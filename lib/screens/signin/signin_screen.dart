@@ -28,7 +28,12 @@ class SigninScreen extends GetView<SigninController> {
               children: [
                 TextFormField(
                   controller: emailController,
-                  decoration: const InputDecoration(labelText: 'Email'),
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
                   validator: (value) {
                     if (value!.isEmpty) {
                       return 'Please enter an email';
@@ -36,9 +41,14 @@ class SigninScreen extends GetView<SigninController> {
                     return null;
                   },
                 ),
+                const SizedBox(height: 16.0),
                 TextFormField(
                   controller: passwordController,
-                  decoration: const InputDecoration(labelText: 'Password'),
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(6)),
+                  ),
                   obscureText: true,
                   validator: (value) {
                     if (value!.isEmpty) {

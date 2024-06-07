@@ -29,7 +29,12 @@ class SignupScreen extends GetView<SignupController> {
             children: [
               TextFormField(
                 controller: emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                ),
                 validator: (value) {
                   if (value!.isEmpty) {
                     return 'Please enter an email';
@@ -37,9 +42,15 @@ class SignupScreen extends GetView<SignupController> {
                   return null;
                 },
               ),
+              const SizedBox(height: 16.0),
               TextFormField(
                 controller: fullNameController,
-                decoration: const InputDecoration(labelText: 'Full Name'),
+                decoration: InputDecoration(
+                  labelText: 'Full Name',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                ),
                 validator: (value) {
                   if (value!.isEmpty) {
                     return 'Please enter your full name';
@@ -47,9 +58,15 @@ class SignupScreen extends GetView<SignupController> {
                   return null;
                 },
               ),
+              const SizedBox(height: 16.0),
               TextFormField(
                 controller: passwordController,
-                decoration: const InputDecoration(labelText: 'Password'),
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                ),
                 obscureText: true,
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -58,10 +75,15 @@ class SignupScreen extends GetView<SignupController> {
                   return null;
                 },
               ),
+              const SizedBox(height: 16.0),
               TextFormField(
                 controller: confirmController,
-                decoration:
-                    const InputDecoration(labelText: 'Confirm Password'),
+                decoration: InputDecoration(
+                  labelText: 'Confirm Password',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                ),
                 obscureText: true,
                 validator: (value) {
                   if (value!.isEmpty) {
