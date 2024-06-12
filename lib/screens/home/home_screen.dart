@@ -5,9 +5,8 @@ import 'package:poly_lingua_app/services/user_controller.dart';
 import 'package:poly_lingua_app/utils/check_image_network.dart';
 import 'package:poly_lingua_app/widgets/bottom_navigator_bar.dart';
 import 'package:poly_lingua_app/classes/article.dart';
-
-import '../../utils/fetch_articles.dart';
-import '../../utils/calculate_read_time.dart';
+import 'package:poly_lingua_app/utils/fetch_articles.dart';
+import 'package:poly_lingua_app/utils/calculate_read_time.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -136,8 +135,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   decoration: const BoxDecoration(
                                     border: Border(
                                       bottom: BorderSide(
-                                        color: Colors.purple,
-                                        width: 1.0,
+                                        color: Colors.green,
+                                        width: 1.5,
                                       ),
                                     ),
                                   ),

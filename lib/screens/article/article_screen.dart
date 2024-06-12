@@ -10,6 +10,7 @@ import 'package:poly_lingua_app/screens/favorite/favorite_controller.dart';
 import 'package:poly_lingua_app/screens/flashcards/flashcards_controller.dart';
 import 'package:poly_lingua_app/services/user_controller.dart';
 import 'package:poly_lingua_app/utils/calculate_read_time.dart';
+import 'package:poly_lingua_app/utils/fetch_articles.dart';
 import 'package:poly_lingua_app/widgets/bottom_navigator_bar.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:sqflite/sqflite.dart';
@@ -33,10 +34,12 @@ class _ArticleScreenState extends State<ArticleScreen> {
   final flashcardsController = Get.put(FlashcardsController());
   final articleController = Get.find<ArticleController>();
   final FlutterTts flutterTts = FlutterTts();
+  int views = 0;
 
   @override
   void initState() {
     super.initState();
+    updateViews().then((value) => {});
     isFavorite = userController.user?.articles
             ?.any((element) => element.title == article.title) ??
         false;
@@ -61,6 +64,27 @@ class _ArticleScreenState extends State<ArticleScreen> {
     await flutterTts.setPitch(1.2); // Higher frequency (pitch) of the voice
     await flutterTts.setLanguage(language);
     await flutterTts.speak(word);
+  }
+
+  Future<void> updateViews() async {
+    bool isEnglish = userController.user!.language == 'en' ? true : false;
+    final data = await readLocalFile(isEnglish);
+    int pos = data.indexWhere((element) => element['title'] == article.title);
+
+    if (pos == -1) {
+      data.insert(0, article.toJson());
+      pos = 0;
+    }
+
+    data[pos]['views'] =
+        data[pos]['views'] != null ? data[pos]['views'] + 1 : 1;
+
+    setState(() {
+      views = data[pos]['views'];
+    });
+
+    await writeJsonFile(data, isEnglish);
+    print('Updated: ${data[pos]['title']} with views: ${data[pos]['views']}');
   }
 
   @override
@@ -194,12 +218,24 @@ class _ArticleScreenState extends State<ArticleScreen> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(right: 20.0),
-                        child: Text(
-                          'Read Time: ${article.language == 'en' ? calculateReadTimeEn(article.content) : calculateReadTimeJa(article.content)} mins',
-                          style: const TextStyle(color: Colors.grey),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.remove_red_eye_outlined,
+                              color: Colors.grey,
+                            ),
+                            Text(
+                              ' $views views',
+                              style: const TextStyle(color: Colors.grey),
+                            ),
+                          ],
                         ),
                       ),
                     ],
+                  ),
+                  Text(
+                    'Read Time: ${article.language == 'en' ? calculateReadTimeEn(article.content) : calculateReadTimeJa(article.content)} minutes',
+                    style: const TextStyle(color: Colors.grey),
                   ),
                   const SizedBox(height: 16),
                   articleController.wordDataObs.isEmpty

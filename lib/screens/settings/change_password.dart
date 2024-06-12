@@ -50,7 +50,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   cursorColor: Colors.grey,
                   obscureText: true,
                   decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.all(16.0),
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 8.0,
+                      horizontal: 16.0,
+                    ),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(6)),
                     labelText: 'Current Password',
@@ -71,7 +74,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   cursorColor: Colors.grey,
                   obscureText: true,
                   decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.all(16.0),
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 8.0,
+                      horizontal: 16.0,
+                    ),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(6)),
                     labelText: 'New Password',
@@ -89,7 +95,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   obscureText: true,
                   cursorColor: Colors.grey,
                   decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.all(16.0),
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 8.0,
+                      horizontal: 16.0,
+                    ),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(6)),
                     labelText: 'Confirm Password',

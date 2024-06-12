@@ -6,8 +6,9 @@ class Article {
   final String publishedAt;
   final String content;
   final String language;
+  int views = 0;
 
-  const Article({
+  Article({
     required this.title,
     required this.description,
     required this.url,
@@ -15,6 +16,7 @@ class Article {
     required this.publishedAt,
     required this.content,
     required this.language,
+    required this.views,
   });
 
   Map<String, dynamic> toJson() {
@@ -26,6 +28,7 @@ class Article {
       'publishedAt': publishedAt,
       'content': content,
       'language': language,
+      'views': views,
     };
   }
 
@@ -38,6 +41,7 @@ class Article {
       publishedAt: json['publishedAt'],
       content: json['content'],
       language: json['language'],
+      views: json['views'] ?? 0,
     );
   }
 }
