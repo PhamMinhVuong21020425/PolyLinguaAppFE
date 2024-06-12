@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,8 +7,10 @@ import 'package:poly_lingua_app/classes/flashcard.dart';
 import 'package:poly_lingua_app/classes/word_data.dart';
 import 'package:poly_lingua_app/screens/article/article_controller.dart';
 import 'package:poly_lingua_app/screens/article/comment_widget.dart';
+import 'package:poly_lingua_app/screens/article/recommend_widget.dart';
 import 'package:poly_lingua_app/screens/favorite/favorite_controller.dart';
 import 'package:poly_lingua_app/screens/flashcards/flashcards_controller.dart';
+import 'package:poly_lingua_app/services/bm25_okapi.dart';
 import 'package:poly_lingua_app/services/user_controller.dart';
 import 'package:poly_lingua_app/utils/calculate_read_time.dart';
 import 'package:poly_lingua_app/utils/fetch_articles.dart';
@@ -34,6 +37,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
   final flashcardsController = Get.put(FlashcardsController());
   final articleController = Get.find<ArticleController>();
   final FlutterTts flutterTts = FlutterTts();
+  List<Article> recommendArticles = [];
   int views = 0;
 
   @override
@@ -50,6 +54,12 @@ class _ArticleScreenState extends State<ArticleScreen> {
         .catchError((e) => print('Failed to analyze content: $e'));
 
     articleController.fetchSummary(article.content, article.language, context);
+
+    fetchRecommendArticles().then((value) => {
+          setState(() {
+            recommendArticles = value;
+          })
+        });
   }
 
   @override
@@ -87,6 +97,28 @@ class _ArticleScreenState extends State<ArticleScreen> {
     print('Updated: ${data[pos]['title']} with views: ${data[pos]['views']}');
   }
 
+  Future<List<Article>> fetchRecommendArticles() async {
+    bool isEnglish = (article.language == 'en');
+    List<Article> articles = await fetchArticlesFromJson(isEnglish);
+
+    if (!isEnglish) {
+      articles.shuffle(Random());
+      List<Article> japanArticles = articles.sublist(0, 4);
+      return japanArticles;
+    }
+
+    List<String> query = article.content.toLowerCase().trim().split(' ');
+    List<String> corpus =
+        articles.map((article) => article.content.toLowerCase()).toList();
+
+    BM25Okapi bm25 = BM25Okapi(corpus);
+    List<Article> bm25Articles = bm25.getTopN(query, articles, 5);
+
+    return bm25Articles
+        .where((element) => element.title != article.title)
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,7 +144,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                   renderSummary = true;
                 });
                 controller.animateTo(
-                  controller.position.maxScrollExtent + 100,
+                  controller.position.maxScrollExtent - 400,
                   duration: const Duration(seconds: 1),
                   curve: Curves.easeOut,
                 );
@@ -274,7 +306,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                       totalRepeatCount: 1,
                       onNext: (index, isLast) {
                         controller.animateTo(
-                          controller.position.maxScrollExtent,
+                          controller.position.maxScrollExtent - 400,
                           duration: const Duration(seconds: 1),
                           curve: Curves.easeOut,
                         );
@@ -288,6 +320,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                 ],
               ),
             ),
+            RecommendWidget(recommendArticles: recommendArticles),
           ],
         ),
       ),

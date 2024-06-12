@@ -48,10 +48,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     List<String> query = searchText.toLowerCase().trim().split(' ');
     List<String> corpus =
-        articles.map((article) => article.description!.toLowerCase()).toList();
+        articles.map((article) => article.content.toLowerCase()).toList();
 
     BM25Okapi bm25 = BM25Okapi(corpus);
-    List<Article> bm25Articles = bm25.getTopN(query, articles, 3);
+    List<Article> bm25Articles = bm25.getTopN(query, articles, 10);
 
     Set<Article> filteredArticles = {};
     if (articles[0].language == 'en') {

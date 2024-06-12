@@ -65,7 +65,13 @@ class BM25 {
     final topNIndices = List.from(scores.asMap().keys)
       ..sort((a, b) => scores[b].compareTo(scores[a]));
     topNIndices.removeRange(n, topNIndices.length);
-    return topNIndices.map((i) => documents[i]).toList();
+
+    List<T> results = [];
+    for (var i in topNIndices) {
+      if (scores[i] > 0.1) results.add(documents[i]);
+    }
+
+    return results;
   }
 }
 
