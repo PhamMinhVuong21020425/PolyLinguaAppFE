@@ -1,16 +1,28 @@
 # Poly Lingua App
 
-A new Flutter project.
+## Requirements
 
-## Getting Started
+```
+sdk: 21
+flutter: 3.19.6
+dart: 3.3.4
+gradle: 8.5
+```
 
-This project is a starting point for a Flutter application.
+## How to run
 
-A few resources to get you started if this is your first Flutter project:
+**Step 1:** Clone this repository
 
--   [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
--   [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+**Step 2:** Install packages
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```
+flutter pub get
+```
+
+**Step 3:** Open Android/IOS Emulator
+
+**Step 4:** Run application
+
+```
+flutter run
+```
