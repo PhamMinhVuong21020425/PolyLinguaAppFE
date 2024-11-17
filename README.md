@@ -3,10 +3,10 @@
 ## Requirements
 
 ```
-sdk: 21
-flutter: 3.19.6
-dart: 3.3.4
-gradle: 8.5
+jdk: 23
+flutter: 3.24.5
+dart: 3.5.4
+gradle: 8.10
 ```
 
 ## How to run
