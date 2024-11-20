@@ -243,9 +243,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        article.publishedAt.length < 25
-                            ? article.publishedAt
-                            : article.publishedAt.substring(0, 24),
+                        article.publishedAt,
                         style: const TextStyle(color: Colors.grey),
                       ),
                       Padding(

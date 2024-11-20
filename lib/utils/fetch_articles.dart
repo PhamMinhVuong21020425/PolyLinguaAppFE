@@ -7,8 +7,8 @@ import 'package:poly_lingua_app/classes/article.dart';
 
 Future<List<Article>> fetchArticlesFromJson(bool isEnglish) async {
   String jsonString = isEnglish
-      ? await rootBundle.loadString('assets/data/newsweek-en.json')
-      : await rootBundle.loadString('assets/data/asahi-news-ja.json');
+      ? await rootBundle.loadString('assets/data/news-en.json')
+      : await rootBundle.loadString('assets/data/news-ja.json');
 
   List<dynamic> jsonList = json.decode(jsonString);
   List<Article> articles = jsonList.map((json) {
@@ -29,8 +29,8 @@ Future<List<Article>> fetchArticlesFromJson(bool isEnglish) async {
 
 Future<List<dynamic>> readJsonFile(bool isEnglish) async {
   String jsonString = isEnglish
-      ? await rootBundle.loadString('assets/data/newsweek-en.json')
-      : await rootBundle.loadString('assets/data/asahi-news-ja.json');
+      ? await rootBundle.loadString('assets/data/news-en.json')
+      : await rootBundle.loadString('assets/data/news-ja.json');
 
   List<dynamic> jsonList = json.decode(jsonString);
   return jsonList;
@@ -39,9 +39,8 @@ Future<List<dynamic>> readJsonFile(bool isEnglish) async {
 Future<List<dynamic>> readLocalFile(bool isEnglish) async {
   final directory = await getTemporaryDirectory();
   final path = directory.path;
-  var file = isEnglish
-      ? File('$path/newsweek-en.json')
-      : File('$path/asahi-news-ja.json');
+  var file =
+      isEnglish ? File('$path/news-en.json') : File('$path/news-ja.json');
 
   final exists = await file.exists();
   print('0. File exists? $exists');
@@ -60,9 +59,8 @@ Future<List<dynamic>> readLocalFile(bool isEnglish) async {
 Future<void> writeJsonFile(List<dynamic> data, bool isEnglish) async {
   final directory = await getTemporaryDirectory();
   final path = directory.path;
-  var file = isEnglish
-      ? File('$path/newsweek-en.json')
-      : File('$path/asahi-news-ja.json');
+  var file =
+      isEnglish ? File('$path/news-en.json') : File('$path/news-ja.json');
 
   var sink = file.openWrite();
   final jsonData = jsonEncode(data);

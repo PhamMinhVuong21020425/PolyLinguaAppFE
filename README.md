@@ -7,6 +7,8 @@ jdk: 23
 flutter: 3.24.5
 dart: 3.5.4
 gradle: 8.10
+android: 15
+SDK/API level: 35
 ```
 
 ## How to run
