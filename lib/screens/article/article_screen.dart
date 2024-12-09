@@ -6,6 +6,7 @@ import 'package:poly_lingua_app/classes/article.dart';
 import 'package:poly_lingua_app/classes/flashcard.dart';
 import 'package:poly_lingua_app/classes/word_data.dart';
 import 'package:poly_lingua_app/screens/article/article_controller.dart';
+import 'package:poly_lingua_app/screens/article/classifier_widget.dart';
 import 'package:poly_lingua_app/screens/article/comment_widget.dart';
 import 'package:poly_lingua_app/screens/article/recommend_widget.dart';
 import 'package:poly_lingua_app/screens/favorite/favorite_controller.dart';
@@ -39,6 +40,9 @@ class _ArticleScreenState extends State<ArticleScreen> {
   final FlutterTts flutterTts = FlutterTts();
   List<Article> recommendArticles = [];
   int views = 0;
+  String knn = '';
+  String bayes = '';
+  String tree = '';
 
   @override
   void initState() {
@@ -268,6 +272,8 @@ class _ArticleScreenState extends State<ArticleScreen> {
                     style: const TextStyle(color: Colors.grey),
                   ),
                   const SizedBox(height: 16),
+                  ClassifierButton(article: article),
+                  const SizedBox(height: 12),
                   articleController.wordDataObs.isEmpty
                       ? Text(
                           article.content,
@@ -275,6 +281,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                           style: const TextStyle(fontSize: 16),
                         )
                       : SelectableText.rich(
+                          textAlign: TextAlign.justify,
                           TextSpan(
                             children: parseContent(
                               articleController.wordDataObs,
@@ -335,7 +342,10 @@ class _ArticleScreenState extends State<ArticleScreen> {
   }
 
   List<InlineSpan> parseContent(
-      List<WordData> wordData, String language, BuildContext context) {
+    List<WordData> wordData,
+    String language,
+    BuildContext context,
+  ) {
     final List<InlineSpan> spans = [];
 
     for (final word in wordData) {

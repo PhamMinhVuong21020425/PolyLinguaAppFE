@@ -43,7 +43,6 @@ class ArticleController extends GetxController {
     BuildContext context,
   ) async {
     try {
-      wordDataObs.value = [];
       print('Fetching summary...');
       final summary = await summarizeContent(content, language);
       summaryObs.value = summary;
@@ -91,6 +90,34 @@ class ArticleController extends GetxController {
       }
     } catch (e) {
       throw Exception('Failed to analyze content: $e');
+    }
+  }
+
+  Future<String> classifyArticle(
+      String content, String model, String language) async {
+    final snapshot = await _firestore.collection("servers").get();
+    final docs = snapshot.docs;
+    final server = docs[0].data() as Map;
+    print('Classify API: ${server['classify_api']}');
+
+    final url = Uri.parse('${server['classify_api']}/api/v1/classify');
+    final body =
+        jsonEncode({"query": content, "model": model, "language": language});
+
+    try {
+      final response = await http
+          .post(url, body: body, headers: {'Content-Type': 'application/json'});
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body) as Map;
+        final label = data['result'] as String;
+
+        return label;
+      } else {
+        throw Exception('Failed to classify article: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to  classify article: $e');
     }
   }
 }
