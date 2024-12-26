@@ -40,9 +40,6 @@ class _ArticleScreenState extends State<ArticleScreen> {
   final FlutterTts flutterTts = FlutterTts();
   List<Article> recommendArticles = [];
   int views = 0;
-  String knn = '';
-  String bayes = '';
-  String tree = '';
 
   @override
   void initState() {
@@ -304,6 +301,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                       animatedTexts: [
                         TyperAnimatedText(
                           articleController.summaryObs.value.trim(),
+                          textAlign: TextAlign.justify,
                           textStyle: const TextStyle(fontSize: 16),
                           speed: const Duration(milliseconds: 20),
                         ),
